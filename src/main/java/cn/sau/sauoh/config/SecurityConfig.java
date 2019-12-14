@@ -11,8 +11,6 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
@@ -26,6 +24,13 @@ import java.util.Set;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter implements AuthenticationSuccessHandler {
+    /**
+     * 身份类型字段
+     */
+    private static final String ROLE_PROVINCE_ADMIN = "ROLE_PROVINCE_ADMIN";
+    private static final String ROLE_CITY_ADMIN = "ROLE_CITY_ADMIN";
+    private static final String ROLE_DOCTOR = "ROLE_DOCTOR";
+
     private DataSource dataSource;
 
     @Autowired
@@ -70,21 +75,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Auth
                                 " user.id = user_role.user_id AND user_role.role_id = role.id AND user.username = ?;")
                 //开发阶段暂时不对密码进行加密
                 .passwordEncoder(NoOpPasswordEncoder.getInstance());
-
-        //在设置 SQL 时，我对查询结果集的每一列都设置了别名，为了与 UserDeatialService 的相关内容匹配
-        //ps：我并没有尝试不匹配是否影响程序运行
     }
 
-    //登陆后根据身份跳转
+    /**
+     * 登陆成功后调用，根据用户身份跳转到指定页面
+     */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
-                                        HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+                                        HttpServletResponse response, Authentication authentication) throws IOException {
 
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
         //有 ADMIN 权限先跳转到 admin、有 DOCTOR 权限跳转到 doctor、有 PATIENT 权限跳转到 patient
-        if (roles.contains("ROLE_PROVINCE_ADMIN") || roles.contains("ROLE_CITY_ADMIN")) {
+        if (roles.contains(ROLE_PROVINCE_ADMIN) || roles.contains(ROLE_CITY_ADMIN)) {
             response.sendRedirect("/admin");
-        } else if (roles.contains("ROLE_DOCTOR")) {
+        } else if (roles.contains(ROLE_DOCTOR)) {
             response.sendRedirect("/doctor");
         } else {
             response.sendRedirect("/patient");
