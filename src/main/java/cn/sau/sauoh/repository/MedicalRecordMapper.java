@@ -1,11 +1,8 @@
 package cn.sau.sauoh.repository;
 
 import cn.sau.sauoh.entity.MedicalRecord;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
-@Repository
 public interface MedicalRecordMapper {
     int deleteByPrimaryKey(Integer id);
 

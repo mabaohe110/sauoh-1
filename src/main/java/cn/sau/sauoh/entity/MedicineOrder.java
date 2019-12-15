@@ -2,9 +2,6 @@ package cn.sau.sauoh.entity;
 
 import lombok.Data;
 
-/**
- * @author nullptr
- */
 @Data
 public class MedicineOrder {
     private Integer id;

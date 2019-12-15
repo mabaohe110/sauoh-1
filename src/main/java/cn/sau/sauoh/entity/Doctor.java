@@ -4,9 +4,6 @@ import lombok.Data;
 
 import java.util.Date;
 
-/**
- * @author nullptr
- */
 @Data
 public class Doctor {
     private Integer id;

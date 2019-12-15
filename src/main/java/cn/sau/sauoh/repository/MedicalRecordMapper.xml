@@ -35,38 +35,4 @@
     select id, patient_id, doctor_id, patient_status, doctor_advice
     from medical_record
   </select>
-  <resultMap id="BaseResultMap" type="cn.sau.sauoh.entity.MedicalRecord">
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="patient_id" jdbcType="INTEGER" property="patientId" />
-    <result column="doctor_id" jdbcType="INTEGER" property="doctorId" />
-    <result column="patient_status" jdbcType="LONGVARCHAR" property="patientStatus" />
-    <result column="doctor_advice" jdbcType="LONGVARCHAR" property="doctorAdvice" />
-  </resultMap>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from medical_record
-    where id = #{id,jdbcType=INTEGER}
-  </delete>
-  <insert id="insert" parameterType="cn.sau.sauoh.entity.MedicalRecord">
-    insert into medical_record (id, patient_id, doctor_id, 
-      patient_status, doctor_advice)
-    values (#{id,jdbcType=INTEGER}, #{patientId,jdbcType=INTEGER}, #{doctorId,jdbcType=INTEGER}, 
-      #{patientStatus,jdbcType=LONGVARCHAR}, #{doctorAdvice,jdbcType=LONGVARCHAR})
-  </insert>
-  <update id="updateByPrimaryKey" parameterType="cn.sau.sauoh.entity.MedicalRecord">
-    update medical_record
-    set patient_id = #{patientId,jdbcType=INTEGER},
-      doctor_id = #{doctorId,jdbcType=INTEGER},
-      patient_status = #{patientStatus,jdbcType=LONGVARCHAR},
-      doctor_advice = #{doctorAdvice,jdbcType=LONGVARCHAR}
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select id, patient_id, doctor_id, patient_status, doctor_advice
-    from medical_record
-    where id = #{id,jdbcType=INTEGER}
-  </select>
-  <select id="selectAll" resultMap="BaseResultMap">
-    select id, patient_id, doctor_id, patient_status, doctor_advice
-    from medical_record
-  </select>
 </mapper>
