@@ -7,7 +7,11 @@ import java.util.List;
 
 @Repository
 public interface UserRoleMapper {
+    int deleteByUser(Integer id);
+
     int insert(UserRole record);
+
+    List<UserRole> selectAllByUser(Integer id);
 
     List<UserRole> selectAll();
 }
