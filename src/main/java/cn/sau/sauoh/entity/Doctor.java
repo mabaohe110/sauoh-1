@@ -15,4 +15,18 @@ public class Doctor {
     private String level;
     private String hospital;
     private Integer departmentId;
+
+    public Doctor(Integer userId, String name, String sex, String phone, Date workedTime, String level, String hospital, Integer departmentId) {
+        this.userId = userId;
+        this.name = name;
+        this.sex = sex;
+        this.phone = phone;
+        this.workedTime = workedTime;
+        this.level = level;
+        this.hospital = hospital;
+        this.departmentId = departmentId;
+    }
+
+    public Doctor() {
+    }
 }
