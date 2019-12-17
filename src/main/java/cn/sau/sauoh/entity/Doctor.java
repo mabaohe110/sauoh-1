@@ -13,6 +13,6 @@ public class Doctor {
     private String phone;
     private Date workedTime;
     private String level;
-    private String hostipal;
+    private String hospital;
     private Integer departmentId;
 }

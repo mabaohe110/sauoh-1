@@ -9,7 +9,7 @@
     <result column="phone" jdbcType="VARCHAR" property="phone" />
     <result column="worked_time" jdbcType="DATE" property="workedTime" />
     <result column="level" jdbcType="CHAR" property="level" />
-    <result column="hostipal" jdbcType="VARCHAR" property="hostipal" />
+    <result column="hospital" jdbcType="VARCHAR" property="hospital" />
     <result column="department_id" jdbcType="INTEGER" property="departmentId" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
@@ -19,10 +19,10 @@
   <insert id="insert" parameterType="cn.sau.sauoh.entity.Doctor">
     insert into doctor (id, user_id, name, 
       sex, phone, worked_time, level, 
-      hostipal, department_id)
+      hospital, department_id)
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
       #{sex,jdbcType=CHAR}, #{phone,jdbcType=VARCHAR}, #{workedTime,jdbcType=DATE}, #{level,jdbcType=CHAR}, 
-      #{hostipal,jdbcType=VARCHAR}, #{departmentId,jdbcType=INTEGER})
+      #{hospital,jdbcType=VARCHAR}, #{departmentId,jdbcType=INTEGER})
   </insert>
   <update id="updateByPrimaryKey" parameterType="cn.sau.sauoh.entity.Doctor">
     update doctor
@@ -32,17 +32,17 @@
       phone = #{phone,jdbcType=VARCHAR},
       worked_time = #{workedTime,jdbcType=DATE},
       level = #{level,jdbcType=CHAR},
-      hostipal = #{hostipal,jdbcType=VARCHAR},
+      hospital = #{hospital,jdbcType=VARCHAR},
       department_id = #{departmentId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select id, user_id, name, sex, phone, worked_time, level, hostipal, department_id
+    select id, user_id, name, sex, phone, worked_time, level, hospital, department_id
     from doctor
     where id = #{id,jdbcType=INTEGER}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
-    select id, user_id, name, sex, phone, worked_time, level, hostipal, department_id
+    select id, user_id, name, sex, phone, worked_time, level, hospital, department_id
     from doctor
   </select>
 </mapper>
