@@ -23,4 +23,8 @@
         from user_role
         where user_id = #{id,jdbcType=INTEGER}
     </delete>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from user_role
+        where user_id = #{user_id,jdbcType=INTEGER} and role_id = #{role_id,jdbcType=INTEGER}
+    </delete>
 </mapper>

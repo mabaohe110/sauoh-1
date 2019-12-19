@@ -14,4 +14,6 @@ public interface UserRoleMapper {
     List<UserRole> selectAllByUser(Integer id);
 
     List<UserRole> selectAll();
+
+    int deleteByPrimaryKey(int user_id, int role_id);
 }
