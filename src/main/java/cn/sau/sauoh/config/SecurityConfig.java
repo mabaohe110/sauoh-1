@@ -71,7 +71,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Auth
                 //这个 SQL 的查询结果集应该包括 用户名、权限名
                 .authoritiesByUsernameQuery(
                         "SELECT user.username username, role.name authority " +
-                                "FROM USER INNER JOIN user_role INNER JOIN role WHERE" +
+                                "FROM user INNER JOIN user_role INNER JOIN role WHERE" +
                                 " user.id = user_role.user_id AND user_role.role_id = role.id AND user.username = ?;")
                 //开发阶段暂时不对密码进行加密
                 .passwordEncoder(NoOpPasswordEncoder.getInstance());
