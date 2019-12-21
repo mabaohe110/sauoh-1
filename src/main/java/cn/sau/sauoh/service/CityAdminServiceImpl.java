@@ -1,4 +1,7 @@
 package cn.sau.sauoh.service;
 
-public class CityAdminServiceImpl {
+import org.springframework.stereotype.Service;
+
+@Service
+public class CityAdminServiceImpl extends AdminServiceImpl implements CityAdminService {
 }

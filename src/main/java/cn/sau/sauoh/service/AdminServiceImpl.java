@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class AdminServiceImpl {
+public class AdminServiceImpl implements AdminService {
 
     private UserMapper userMapper;
 
@@ -23,9 +23,7 @@ public class AdminServiceImpl {
     private DoctorListMapper doctorListMapper;
 
     @Autowired
-    public void setUserMapper(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
+    public void setUserMapper(UserMapper userMapper) { this.userMapper = userMapper; }
 
     @Autowired
     public void setUserRoleMapper(UserRoleMapper userRoleMapper) {
@@ -48,12 +46,14 @@ public class AdminServiceImpl {
     }
 
     @Autowired
-    public void setDoctorMapper(DoctorMapper doctorMapper){ this.doctorMapper = doctorMapper;}
+    public void setDoctorMapper(DoctorMapper doctorMapper){ this.doctorMapper = doctorMapper; }
 
-    int insertPatient(User user, UserRole userRole, Patient patient){
+    @Override
+    public int insertPatient(User user, Patient patient){
         int flag1 = userMapper.insert(user);
         int user_id = user.getId();
         int role_id = 4;
+        UserRole userRole = new UserRole(user_id, role_id);
         int flag2 = userRoleMapper.insert(userRole);
         int flag3 = patientMapper.insert(patient);
         int flag = 0;
@@ -63,7 +63,8 @@ public class AdminServiceImpl {
         return flag;
     }
 
-    int deletePatient(int patient_id,int user_id ){
+    @Override
+    public int deletePatient(int patient_id,int user_id ){
         int role_id = 4;
         int flag1 = patientMapper.deleteByPrimaryKey(patient_id);
         int flag2 = userRoleMapper.deleteByPrimaryKey(user_id, role_id);
@@ -75,18 +76,22 @@ public class AdminServiceImpl {
         return flag;
     }
 
-    int updatePatient(Patient patient){
+    @Override
+    public int updatePatient(Patient patient){
         return patientMapper.updateByPrimaryKey(patient);
     }
 
-    List<PatientList> selectPatient(){
+    @Override
+    public List<PatientList> selectPatient(){
         return patientListMapper.selectAll();
     }
 
-    int insertDoctor(User user, UserRole userRole, Doctor doctor){
+    @Override
+    public int insertDoctor(User user, Doctor doctor){
         int flag1 = userMapper.insert(user);
         int user_id = user.getId();
         int role_id = 3;
+        UserRole userRole = new UserRole(user_id, role_id);
         int flag2 = userRoleMapper.insert(userRole);
         int flag3 = doctorMapper.insert(doctor);
         int flag = 0;
@@ -96,7 +101,8 @@ public class AdminServiceImpl {
         return flag;
     }
 
-    int deleteDoctor(int doctor_id,int user_id ){
+    @Override
+    public int deleteDoctor(int doctor_id,int user_id ){
         int role_id = 4;
         int flag1 = doctorMapper.deleteByPrimaryKey(doctor_id);
         int flag2 = userRoleMapper.deleteByPrimaryKey(user_id, role_id);
@@ -108,8 +114,10 @@ public class AdminServiceImpl {
         return flag;
     }
 
-    int updateDoctor(Doctor doctor){ return doctorMapper.updateByPrimaryKey(doctor); }
+    @Override
+    public int updateDoctor(Doctor doctor){ return doctorMapper.updateByPrimaryKey(doctor); }
 
-    List<DoctorList> selectDoctor(){ return doctorListMapper.selectAll(); }
+    @Override
+    public List<DoctorList> selectDoctor(){ return doctorListMapper.selectAll(); }
 
 }
