@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+尊敬的用户：<br/>
+<p>&emsp;您好！您正在使用邮箱
+    <strong><span th:text="${emailAddress}"></span></strong>
+    注册XXX网站，请点击下方的链接验证您的邮箱地址。请在半个小时内完成验证！
+</p>
+<p>&emsp;
+    <a th:href="@{${url}}">点击验证邮箱！</a>
+</p>
+<p>&emsp;
+    如果点击无效，请复制下面的网址在浏览器打开！<br/>
+    <span th:text="${url}"></span>
+</p>
+</body>
+</html>

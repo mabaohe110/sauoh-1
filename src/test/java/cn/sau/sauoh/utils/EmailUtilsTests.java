@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.thymeleaf.context.Context;
 
-import javax.mail.MessagingException;
-
 /**
  * @author nullptr
  * @date 2019/12/20 15:36
@@ -17,19 +15,22 @@ import javax.mail.MessagingException;
 public class EmailUtilsTests {
 
     private EmailUtils utils;
+
     @Autowired
-    public void setService(EmailUtils utils){
+    public void setService(EmailUtils utils) {
         this.utils = utils;
     }
 
     @Test
     void sendTest() {
         String address = "justitacsl@outlook.com";
+        String url = "http://localhost:8080/user/checkmail?checkcode=" + "123123123";
 
         Context context = new Context();
-        context.setVariable("msg", "消息内容测试");
+        context.setVariable("emailAddress", address);
+        context.setVariable("url", url);
 
-        utils.sendEmail(address, "邮件测试", "addressCheck.html",context);
+        utils.sendEmail(address, "邮件测试", "addressCheck.html", context);
         log.debug("邮件发送成功!");
     }
 }

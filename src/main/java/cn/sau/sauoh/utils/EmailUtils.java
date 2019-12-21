@@ -1,5 +1,6 @@
 package cn.sau.sauoh.utils;
 
+import cn.sau.sauoh.config.MailConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -9,7 +10,6 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 /**
@@ -19,8 +19,6 @@ import javax.mail.internet.MimeMessage;
 @Component
 @Slf4j
 public class EmailUtils {
-
-    private static final String SENDER_ADDRESS = "2646009241@qq.com";
 
     private JavaMailSender mailSender;
     private SpringTemplateEngine thymeleaf;
@@ -40,7 +38,6 @@ public class EmailUtils {
      *
      * @param to      收件人邮箱地址
      * @param subject 邮箱主题
-     * @param temp    模板名
      * @param context 邮箱内容，应使用已装填的 context
      */
     @Async
@@ -49,14 +46,15 @@ public class EmailUtils {
         MimeMessageHelper helper;
         try {
             helper = new MimeMessageHelper(message, true);
-            helper.setFrom(SENDER_ADDRESS);
+            helper.setFrom(MailConfig.getSenderAddress());
             helper.setTo(to);
             helper.setSubject(subject);
             String emailText = thymeleaf.process("emailTemp/" + temp, context);
             helper.setText(emailText, true);
             mailSender.send(message);
-        } catch (MessagingException e) {
-            log.error("邮件格式错误！");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("邮件格式错误！" + e.getMessage());
         }
     }
 }
