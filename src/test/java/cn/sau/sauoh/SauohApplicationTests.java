@@ -102,7 +102,7 @@ class SauohApplicationTests {
         }
         Doctor doctor
                 = new Doctor(user_id, "赵云", "male", "15724600000",
-                date, "普通医生", "大连医院", 2);
+                date, "普通医生", "大连医院", 2, true);
         doctorMapper.insert(doctor);
 
     }

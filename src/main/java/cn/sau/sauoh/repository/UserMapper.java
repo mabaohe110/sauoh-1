@@ -9,13 +9,32 @@ import java.util.List;
 public interface UserMapper {
     int deleteByPrimaryKey(Integer id);
 
+    /**
+     * insert data to user table
+     * @param record data
+     * @return 数据库受影响行数，应该为 1
+     */
     int insert(User record);
 
     User selectByPrimaryKey(Integer id);
+
+    User selectByUsername(String username);
 
     List<User> selectAll();
 
     int updateByPrimaryKey(User record);
 
+    /**
+     * insert data to user table(return primary key)
+     * @param record data
+     * @return 数据库中改变的行数
+     */
     int insertUser(User record);
+
+    /**
+     * 检查指定的 checkCode 是否存在
+     * @param checkCode 校验码
+     * @return true表示存在，false表示不存在
+     */
+    boolean checkCodeExist(String checkCode);
 }
