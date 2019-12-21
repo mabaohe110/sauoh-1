@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "application.host",
+      "type": "java.lang.String",
+      "description": "Description for application.host."
+    },
+    {
+      "name": "application.port",
+      "type": "java.lang.String",
+      "description": "Description for application.port."
+    }
+  ] }
