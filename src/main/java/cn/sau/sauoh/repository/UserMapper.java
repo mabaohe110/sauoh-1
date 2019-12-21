@@ -37,4 +37,6 @@ public interface UserMapper {
      * @return true表示存在，false表示不存在
      */
     boolean checkCodeExist(String checkCode);
+
+    List<User> selectCityAdmin();
 }

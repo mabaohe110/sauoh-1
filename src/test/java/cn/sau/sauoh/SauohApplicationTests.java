@@ -29,6 +29,7 @@ class SauohApplicationTests {
     @Autowired
     private MedicineMapper medicineMapper;
 
+
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @Test
@@ -182,7 +183,8 @@ class SauohApplicationTests {
 
     @Test
     void selectCityAdminTest() {
-        //略
+        List<User> cityAdminList = userMapper.selectCityAdmin();
+        System.out.println(cityAdminList.toString());
     }
 
     @Test
@@ -193,4 +195,5 @@ class SauohApplicationTests {
         medicine.setPrice(new BigDecimal("9.99"));
         medicineMapper.updateByPrimaryKey(medicine);
     }
+
 }
