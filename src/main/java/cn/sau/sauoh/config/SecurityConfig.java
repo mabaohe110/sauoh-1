@@ -67,12 +67,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Auth
                 .dataSource(dataSource)
                 //这个 SQL 的查询结果集应该包括 用户名、密码和是否启用信息
                 .usersByUsernameQuery(
-                        "SELECT username, password, check_code is null enable FROM user WHERE username = ?;")
+                        "SELECT username, password, true enable FROM user WHERE username = ?;")
                 //这个 SQL 的查询结果集应该包括 用户名、权限名
                 .authoritiesByUsernameQuery(
                         "SELECT user.username username, role.name authority " +
                                 "FROM user INNER JOIN user_role INNER JOIN role WHERE" +
-                                "user.id = user_role.user_id AND user_role.role_id = role.id AND user.username = ?;")
+                                " user.id = user_role.user_id AND user_role.role_id = role.id AND user.username = ?;")
                 //开发阶段暂时不对密码进行加密
                 .passwordEncoder(NoOpPasswordEncoder.getInstance());
     }
