@@ -39,4 +39,6 @@ public interface UserMapper {
     boolean checkCodeExist(String checkCode);
 
     List<User> selectCityAdmin();
+
+    User selectByCheckCode(String checkCode);
 }
