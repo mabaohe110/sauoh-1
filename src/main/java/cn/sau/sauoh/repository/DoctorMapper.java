@@ -16,4 +16,6 @@ public interface DoctorMapper {
     List<Doctor> selectAll();
 
     int updateByPrimaryKey(Doctor record);
+
+    int insertDoctor(Doctor record);
 }
