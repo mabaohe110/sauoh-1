@@ -15,12 +15,12 @@ public class UserForm {
 
     @Email(message = "邮箱格式错误！")
     @NotNull(message = "邮箱不能为空！")
-    private String username;
+    private String email;
 
     @NotNull(message = "密码不能为空！")
     private String password;
 
     public User turnToUser() {
-        return User.builder().username(this.username).password(this.password).build();
+        return User.builder().username(this.email).password(this.password).build();
     }
 }
