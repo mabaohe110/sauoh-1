@@ -73,13 +73,13 @@ public class UserService {
         input.setCreateTime(Timestamp.from(Instant.now()));
         userMapper.insertUser(input);
 
-        String url = "http://" + MailConfig.getDefaultHostAndPort() + "/user/checkmail" + input.getCheckCode();
+        String url = "http://" + MailConfig.getDefaultHostAndPort() + "/checkaddress?checkcode=" + input.getCheckCode();
 
         Context context = new Context();
         context.setVariable("emailAddress", input.getUsername());
         context.setVariable("url", url);
 
-        emailUtils.sendEmail(input.getUsername(), "邮箱验证", "emailTemplate.html", context);
+        emailUtils.sendEmail(input.getUsername(), "邮箱验证", "addressCheck.html", context);
         return input;
     }
 

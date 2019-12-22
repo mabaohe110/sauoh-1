@@ -34,6 +34,6 @@ public class MailConfig {
     }
 
     public static String getDefaultHostAndPort() {
-        return DEFAULT_PORT + ':' + DEFAULT_HOST;
+        return DEFAULT_HOST + ':' + DEFAULT_PORT;
     }
 }

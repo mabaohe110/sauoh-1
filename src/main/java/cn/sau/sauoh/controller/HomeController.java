@@ -11,6 +11,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 
@@ -41,22 +42,21 @@ public class HomeController {
             return "register";
         }
         String status = userService.usernameAvailable(form.getEmail());
-
-        log.info(status);
-
         if ("overtime".equals(status)) {
             userService.deleteUser(form.turnToUser());
         }
         if ("noExist".equals(status) || "overtime".equals(status)) {
             User user = userService.userRegisterProcess(form.turnToUser());
-            return "redirect:/home" + user.getId();
+            return "redirect:/home";
         }
-
         String errorMsg = "registered".equals(status) ? "邮箱已被注册！" : "请进行邮箱验证后直接登陆！";
         ValidationUtils.rejectIfEmpty(errors, "email", null, errorMsg);
-
-        log.info(errorMsg);
-
         return "register";
+    }
+
+    @GetMapping("/checkaddress")
+    public String checkEmailAddressProcess(@RequestParam String checkcode){
+        userService.checkEmailAddressProcess(checkcode);
+        return "registered";
     }
 }
