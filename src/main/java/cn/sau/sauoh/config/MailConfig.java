@@ -17,13 +17,11 @@ import javax.mail.MessagingException;
 public class MailConfig {
 
     @Value("${spring.mail.username}")
-    private static String DEFAULT_SENDER_ADDRESS;
+    private static final String DEFAULT_SENDER_ADDRESS = "2646009241@qq.com";
 
-    @Value("${application.host}")
-    private static String DEFAULT_HOST;
-
-    @Value("${application.port}")
-    private static String DEFAULT_PORT;
+    //todo 部署前改IP和端口
+    private static final String DEFAULT_HOST = "localhost";
+    private static final String DEFAULT_PORT = "8080";
 
     @Bean
     @Autowired
