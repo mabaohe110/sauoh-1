@@ -39,6 +39,17 @@ class UserMapperTests {
         // 有值
         Assert.hasText(one.getUsername(), "field username is empty");
         Assert.hasText(one.getPassword(), "field password is empty");
+
+        User two = mapper.selectByUsername("province_admin");
+        log.info(two.toString());
+        //非空
+        Assert.notNull(two.getId(), "field id is null");
+        // 有值
+        Assert.hasText(two.getUsername(), "field username is empty");
+        Assert.hasText(two.getPassword(), "field password is empty");
+
+        Assert.isTrue(mapper.checkCodeExist("ttt"), "data not exist");
+        Assert.isTrue(!mapper.checkCodeExist("test"), "data exist");
     }
 
     /**
