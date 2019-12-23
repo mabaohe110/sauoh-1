@@ -1,11 +1,12 @@
 package cn.sau.sauoh.service;
 
+import cn.sau.sauoh.entity.DoctorList;
 import cn.sau.sauoh.entity.Medicine;
 import cn.sau.sauoh.entity.User;
 
 import java.util.List;
 
-public interface ProvinceAdminService {
+public interface ProvinceAdminService extends AdminService{
     int insertCityAdmin(User user);
 
     int deleteCityAdmin(int user_id);
@@ -15,4 +16,6 @@ public interface ProvinceAdminService {
     List<User> selectCityAdmin();
 
     int updateMedicinePrice(Medicine medicine);
+
+    List<DoctorList> selectDoctorUnchecked();
 }

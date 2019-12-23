@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface DoctorListMapper {
     List<DoctorList> selectAll();
+
+    List<DoctorList> selectDoctorUnchecked();
 }

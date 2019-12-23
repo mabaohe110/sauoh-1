@@ -196,4 +196,9 @@ class SauohApplicationTests {
         medicineMapper.updateByPrimaryKey(medicine);
     }
 
+    @Test
+    void selectUncheckedTest(){
+        List<DoctorList> doctorLists = doctorListMapper.selectDoctorUnchecked();
+        System.out.println(doctorLists.toString());
+    }
 }
