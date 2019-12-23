@@ -14,12 +14,9 @@ import java.sql.Timestamp;
 public class User {
     private Integer id;
     private String username;
+    private String email;
     private String password;
     private Timestamp createTime;
     private String checkCode;
 
-    public User(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
 }

@@ -21,7 +21,7 @@ public interface UserService {
     /**
      * 处理创建账户的过程
      *
-     * @param input 前端传递过来的 User 数据(经过数据验证)
+     * @param input 前端传递过来的User数据(经过数据验证)
      * @return 存入数据库后的User数据
      */
     User userRegisterProcess(User input);
