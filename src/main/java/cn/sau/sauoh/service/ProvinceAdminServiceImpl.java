@@ -1,8 +1,10 @@
 package cn.sau.sauoh.service;
 
+import cn.sau.sauoh.entity.DoctorList;
 import cn.sau.sauoh.entity.Medicine;
 import cn.sau.sauoh.entity.User;
 import cn.sau.sauoh.entity.UserRole;
+import cn.sau.sauoh.repository.DoctorListMapper;
 import cn.sau.sauoh.repository.MedicineMapper;
 import cn.sau.sauoh.repository.UserMapper;
 import cn.sau.sauoh.repository.UserRoleMapper;
@@ -20,8 +22,19 @@ public class ProvinceAdminServiceImpl extends AdminServiceImpl implements Provin
 
     private UserRoleMapper userRoleMapper;
 
+    private DoctorListMapper doctorListMapper;
+
     @Autowired
     public void setMedicineMapper(MedicineMapper medicineMapper) { this.medicineMapper = medicineMapper; }
+
+    @Autowired
+    public void setUserMapper(UserMapper userMapper) { this.userMapper = userMapper; }
+
+    @Autowired
+    public void setUserRoleMapper(UserRoleMapper userRoleMapper) { this.userRoleMapper = userRoleMapper; }
+
+    @Autowired
+    public void setDoctorListMapper(DoctorListMapper doctorListMapper) { this.doctorListMapper = doctorListMapper; }
 
     @Override
     public int insertCityAdmin(User user){
@@ -58,5 +71,7 @@ public class ProvinceAdminServiceImpl extends AdminServiceImpl implements Provin
     @Override
     public int updateMedicinePrice(Medicine medicine){ return medicineMapper.updateByPrimaryKey(medicine); }
 
+    @Override
+    public List<DoctorList> selectDoctorUnchecked(){ return doctorListMapper.selectDoctorUnchecked(); }
 
 }

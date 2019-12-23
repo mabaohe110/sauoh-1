@@ -31,4 +31,19 @@
         FROM user u
                  right join doctor d on u.id = d.user_id
     </select>
+    <select id="selectDoctorUnchecked" resultMap="doctorListMap">
+        SELECT u.username,
+               u.password,
+               d.name,
+               d.sex,
+               d.phone,
+               d.worked_time,
+               d.level,
+               d.hospital,
+               d.department_id,
+               d.checked
+        FROM user u
+                 right join doctor d on u.id = d.user_id
+	    WHERE d.checked = '0'
+    </select>
 </mapper>

@@ -56,8 +56,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Auth
                 .antMatchers("/doctor", "/doctor/**").hasRole("DOCTOR")
                 // 需要 ADMIN 权限
                 .antMatchers("/admin", "/admin/**").hasAnyRole("CITY_ADMIN", "PROVINCE_ADMIN")
-                // 其他所有访问不需要权限
+                //其他所有访问不需要权限
                 .anyRequest().permitAll();
+                //http.csrf().disable();
     }
 
     @Override
