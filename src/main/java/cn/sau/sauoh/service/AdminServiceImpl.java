@@ -23,7 +23,9 @@ public class AdminServiceImpl implements AdminService {
     private DoctorListMapper doctorListMapper;
 
     @Autowired
-    public void setUserMapper(UserMapper userMapper) { this.userMapper = userMapper; }
+    public void setUserMapper(UserMapper userMapper) {
+        this.userMapper = userMapper;
+    }
 
     @Autowired
     public void setUserRoleMapper(UserRoleMapper userRoleMapper) {
@@ -46,10 +48,12 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Autowired
-    public void setDoctorMapper(DoctorMapper doctorMapper){ this.doctorMapper = doctorMapper; }
+    public void setDoctorMapper(DoctorMapper doctorMapper) {
+        this.doctorMapper = doctorMapper;
+    }
 
     @Override
-    public int insertPatient(User user, Patient patient){
+    public int insertPatient(User user, Patient patient) {
         int flag1 = userMapper.insert(user);
         int user_id = user.getId();
         int role_id = 4;
@@ -57,37 +61,37 @@ public class AdminServiceImpl implements AdminService {
         int flag2 = userRoleMapper.insert(userRole);
         int flag3 = patientMapper.insert(patient);
         int flag = 0;
-        if(flag1 == flag2 && flag2 == flag3){
+        if (flag1 == flag2 && flag2 == flag3) {
             flag = 1;
         }
         return flag;
     }
 
     @Override
-    public int deletePatient(int patient_id,int user_id ){
+    public int deletePatient(int patient_id, int user_id) {
         int role_id = 4;
         int flag1 = patientMapper.deleteByPrimaryKey(patient_id);
         int flag2 = userRoleMapper.deleteByPrimaryKey(user_id, role_id);
         int flag3 = userMapper.deleteByPrimaryKey(user_id);
         int flag = 0;
-        if(flag1 == flag2 && flag2 == flag3){
+        if (flag1 == flag2 && flag2 == flag3) {
             flag = 1;
         }
         return flag;
     }
 
     @Override
-    public int updatePatient(Patient patient){
+    public int updatePatient(Patient patient) {
         return patientMapper.updateByPrimaryKey(patient);
     }
 
     @Override
-    public List<PatientList> selectPatient(){
+    public List<PatientList> selectPatient() {
         return patientListMapper.selectAll();
     }
 
     @Override
-    public int insertDoctor(User user, Doctor doctor){
+    public int insertDoctor(User user, Doctor doctor) {
         int flag1 = userMapper.insert(user);
         int user_id = user.getId();
         int role_id = 3;
@@ -95,29 +99,33 @@ public class AdminServiceImpl implements AdminService {
         int flag2 = userRoleMapper.insert(userRole);
         int flag3 = doctorMapper.insert(doctor);
         int flag = 0;
-        if(flag1 == flag2 && flag2 == flag3){
+        if (flag1 == flag2 && flag2 == flag3) {
             flag = 1;
         }
         return flag;
     }
 
     @Override
-    public int deleteDoctor(int doctor_id,int user_id ){
+    public int deleteDoctor(int doctor_id, int user_id) {
         int role_id = 4;
         int flag1 = doctorMapper.deleteByPrimaryKey(doctor_id);
         int flag2 = userRoleMapper.deleteByPrimaryKey(user_id, role_id);
         int flag3 = userMapper.deleteByPrimaryKey(user_id);
         int flag = 0;
-        if(flag1 == flag2 && flag2 == flag3){
+        if (flag1 == flag2 && flag2 == flag3) {
             flag = 1;
         }
         return flag;
     }
 
     @Override
-    public int updateDoctor(Doctor doctor){ return doctorMapper.updateByPrimaryKey(doctor); }
+    public int updateDoctor(Doctor doctor) {
+        return doctorMapper.updateByPrimaryKey(doctor);
+    }
 
     @Override
-    public List<DoctorList> selectDoctor(){ return doctorListMapper.selectAll(); }
+    public List<DoctorList> selectDoctor() {
+        return doctorListMapper.selectAll();
+    }
 
 }
