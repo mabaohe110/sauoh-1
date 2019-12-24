@@ -19,7 +19,12 @@ import java.time.Instant;
  * @date 2019/12/20 13:58
  */
 @Service
-public class UserServiceImpl implements UserService {
+public class AuthServiceImpl implements AuthService {
+
+    private static final String NO_EXIST = "noExist";
+    private static final String REGISTERED = "registered";
+    private static final String REGISTERING = "registering";
+    private static final String OVERTIME = "overtime";
 
     private UserMapper userMapper;
     private EmailUtils emailUtils;
@@ -35,19 +40,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String usernameAvailable(String username) {
+    public String fieldStatus(String filedName, String filed) {
         //数据库中是否存在数据，不存在表示可用
-        User user = userMapper.selectByUsername(username);
+        User user = "username".equals(filedName) ? userMapper.selectByUsername(filed) : userMapper.selectByEmail(filed);
         if (user == null) {
-            return "noExist";
+            return NO_EXIST;
         }
         //检查check_code
         if (user.getCheckCode() == null) {
-            return "registered";
+            return REGISTERED;
         }
         Instant createTime = user.getCreateTime().toInstant();
         Duration duration = Duration.between(createTime, Instant.now());
-        return duration.toMinutes() < 30 ? "registering" : "overtime";
+        return duration.toMinutes() < 30 ? REGISTERING : OVERTIME;
     }
 
     @Override
@@ -56,18 +61,15 @@ public class UserServiceImpl implements UserService {
         while (!checkCodeAvailable(checkCode)) {
             checkCode = RandomStringUtils.randomAlphanumeric(50);
         }
-
         input.setCheckCode(checkCode);
         input.setCreateTime(Timestamp.from(Instant.now()));
         userMapper.insertUser(input);
-
         String url = "http://" + MailConfig.getDefaultHostAndPort() + "/checkaddress?checkcode=" + input.getCheckCode();
-
+        //邮件模板内容
         Context context = new Context();
-        context.setVariable("emailAddress", input.getUsername());
+        context.setVariable("emailAddress", input.getEmail());
         context.setVariable("url", url);
-
-        emailUtils.sendEmail(input.getUsername(), "邮箱验证", "addressCheck.html", context);
+        emailUtils.sendEmail(input.getEmail(), "邮箱验证", "addressCheck.html", context);
         return input;
     }
 
@@ -95,7 +97,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(User user) {
-        User exist = userMapper.selectByUsername(user.getUsername());
-        userMapper.deleteByPrimaryKey(exist.getId());
+        userMapper.deleteByPrimaryKey(user.getId());
     }
 }
