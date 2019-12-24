@@ -3,20 +3,23 @@ package cn.sau.sauoh.service;
 import cn.sau.sauoh.entity.User;
 
 /**
+ * 登陆（实际由 Spring Security 接管）、注册逻辑
+ *
  * @author nullptr
  * @date 2019/12/23 16:44
  */
-public interface UserService {
+public interface AuthService {
 
     /**
-     * 检查指定的邮箱处于何种状态
+     * 检查指定的字段处于何种状态（一般用户用户名和邮箱的检查）
      *
-     * @param username 用户名
-     * @return 邮箱处于何种状态的描述，包括：noExist不存在、registered已注册（有数据且check_code为空）、
+     * @param fieldName 字段名
+     * @param field 字段值
+     * @return 字段处于何种状态的描述，包括：noExist不存在、registered已注册（有数据且check_code为空）、
      * registering 注册中（有数据、check_code不为空且create_time离当前时间不超过半个小时）、
      * overtime 注册过期（有数据、check_code不为空但create_time离当前时间超过了半个小时)
      */
-    String usernameAvailable(String username);
+    String fieldStatus(String fieldName, String field);
 
     /**
      * 处理创建账户的过程
