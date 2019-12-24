@@ -19,4 +19,8 @@ public class User {
     private Timestamp createTime;
     private String checkCode;
 
+    public User(String username, String password){
+        this.username = username;
+        this.password = password;
+    }
 }

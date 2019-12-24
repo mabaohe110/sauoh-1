@@ -1,6 +1,8 @@
 package cn.sau.sauoh.repository;
 
+import cn.sau.sauoh.entity.Role;
 import cn.sau.sauoh.entity.User;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,6 +21,8 @@ public interface UserMapper {
     User selectByPrimaryKey(Integer id);
 
     User selectByUsername(String username);
+
+    User selectByEmail(String email);
 
     List<User> selectAll();
 

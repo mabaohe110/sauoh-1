@@ -9,9 +9,6 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import java.sql.Timestamp;
-import java.time.Instant;
-
 /**
  * @author nullptr
  * @date 2019/12/21 20:03
@@ -20,28 +17,30 @@ import java.time.Instant;
 public class UserServiceTests {
 
     private UserMapper mapper;
-    private UserService service;
+    private AuthService service;
+
     @Autowired
-    public void setService(UserService service) {
+    public void setService(AuthService service) {
         this.service = service;
     }
+
     @Autowired
     public void setMapper(UserMapper mapper) {
         this.mapper = mapper;
     }
 
     @Test
-    void usernameAvailableTest(){
-        Assert.isTrue("noExist".equals(service.usernameAvailable("一个数据库中没有的用户名")),"error position : noExist");
-        Assert.isTrue("registered".equals(service.usernameAvailable("city_admin")), "error position : registered");
-        Assert.isTrue("registering".equals(service.usernameAvailable("ttt")), "error position : registering");
-        Assert.isTrue("overtime".equals(service.usernameAvailable("wang1")), "error position : overtime");
+    void usernameAvailableTest() {
+        Assert.isTrue("noExist".equals(service.fieldStatus("username", "一个数据库中没有的用户名")), "error position : noExist");
+        Assert.isTrue("registered".equals(service.fieldStatus("username", "city_admin")), "error position : registered");
+        Assert.isTrue("registering".equals(service.fieldStatus("username", "ttt")), "error position : registering");
+        Assert.isTrue("overtime".equals(service.fieldStatus("username", "wang1")), "error position : overtime");
     }
 
     @Test
     @Transactional
     @Rollback
-    void userRegisterProcessTest(){
+    void userRegisterProcessTest() {
         User user = User.builder().username("justitacsl@outlook.com").
                 password("password").build();
 
@@ -50,7 +49,7 @@ public class UserServiceTests {
     }
 
     @Test
-    void checkCodeAvailableTest(){
+    void checkCodeAvailableTest() {
         Assert.isTrue(!service.checkCodeAvailable("123123"), "checkCodeAvailable false验证时失败");
         Assert.isTrue(service.checkCodeAvailable("321321"), "checkCodeAvailable true验证时失败");
     }
@@ -58,7 +57,7 @@ public class UserServiceTests {
     @Test
     @Transactional
     @Rollback
-    void checkEmailAddressProcessTest(){
+    void checkEmailAddressProcessTest() {
         Assert.isTrue(!service.checkEmailAddressProcess("这个验证码不存在"), "checkEmailAddressProcess false验证时失败");
         Assert.isTrue(!service.checkEmailAddressProcess("123123"), "checkEmailAddressProcess false验证时失败");
         Assert.isTrue(service.checkEmailAddressProcess("ttt"), "checkEmailAddressProcess true验证时失败");

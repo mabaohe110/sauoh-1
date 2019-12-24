@@ -88,7 +88,7 @@ class UserMapperTests {
     @Transactional
     @Rollback
     void insertTest() {
-        User one = User.builder().username("测试用户").password("测试密码").
+        User one = User.builder().username("测试用户").email("12345@qq.com").password("测试密码").
                 checkCode("随机字符串").createTime(Timestamp.from(Instant.now())).build();
 
         int rows = mapper.insert(one);

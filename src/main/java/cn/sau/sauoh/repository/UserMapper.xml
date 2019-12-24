@@ -4,6 +4,7 @@
     <resultMap id="BaseResultMap" type="cn.sau.sauoh.entity.User">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
         <result column="password" jdbcType="VARCHAR" property="password"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="check_code" jdbcType="VARCHAR" property="checkCode"/>
@@ -14,38 +15,43 @@
         where id = #{id,jdbcType=INTEGER}
     </delete>
     <insert id="insert" parameterType="cn.sau.sauoh.entity.User">
-        insert into user (id, username, password, create_time, check_code)
-        values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
-                #{createTime,jdbcType=TIMESTAMP}, #{checkCode,jdbcType=VARCHAR})
+        insert into user (id, username, email, password, create_time, check_code)
+        values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{email, jdbcType=VARCHAR},
+                #{password,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{checkCode,jdbcType=VARCHAR})
     </insert>
     <update id="updateByPrimaryKey" parameterType="cn.sau.sauoh.entity.User">
         update user
         set username    = #{username,jdbcType=VARCHAR},
+            email       = #{email,jdbcType=VARCHAR},
             password    = #{password,jdbcType=VARCHAR},
             create_time = #{createTime,jdbcType=TIMESTAMP},
             check_code  = #{checkCode,jdbcType=VARCHAR}
         where id = #{id,jdbcType=INTEGER}
     </update>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-        select id, username, password, create_time, check_code
+        select id, username, email, password, create_time, check_code
         from user
         where id = #{id,jdbcType=INTEGER}
     </select>
     <select id="selectByUsername" parameterType="java.lang.String" resultMap="BaseResultMap">
-        select id, username, password, create_time, check_code
+        select id, username, email, password, create_time, check_code
         from user
         where username = #{username,jdbcType=VARCHAR}
     </select>
+    <select id="selectByEmail" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select id, username, email, password, create_time, check_code
+        from user
+        where email = #{email,jdbcType=VARCHAR}
+    </select>
     <select id="selectAll" resultMap="BaseResultMap">
-        select id, username, password, create_time, check_code
+        select id, username, email, password, create_time, check_code
         from user
     </select>
     <insert id="insertUser" useGeneratedKeys="true" keyProperty="id"
             parameterType="cn.sau.sauoh.entity.User">
-        insert into user (id, username, password, create_time, check_code)
-        values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
-                #{createTime,jdbcType=TIMESTAMP},
-                #{checkCode,jdbcType=VARCHAR})
+        insert into user (id, username, email, password, create_time, check_code)
+        values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR},
+                #{password,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{checkCode,jdbcType=VARCHAR})
     </insert>
     <select id="selectCityAdmin" resultMap="BaseResultMap">
         SELECT u.*
@@ -59,7 +65,7 @@
         WHERE check_code = #{checkCode,jdbcType=VARCHAR};
     </select>
     <select id="selectByCheckCode" resultMap="BaseResultMap" parameterType="java.lang.String">
-        select id, username, password, create_time, check_code
+        select id, username, email, password, create_time, check_code
         from user
         where check_code = #{checkCode, jdbcType=VARCHAR};
     </select>
