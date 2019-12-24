@@ -54,7 +54,7 @@ public class EmailUtils {
             mailSender.send(message);
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("邮件格式错误！" + e.getMessage());
+            log.error("邮件发送错误！" + e.getMessage());
         }
     }
 }
