@@ -101,22 +101,22 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public boolean checkEmailAddressProcess(String checkCode) {
+    public String checkEmailAddressProcess(String checkCode) {
         if (!userMapper.checkCodeExist(checkCode)) {
             //不存在checkCode
-            return false;
+            return "noExist";
         }
         User user = userMapper.selectByCheckCode(checkCode);
         Duration duration = Duration.between(user.getCreateTime().toInstant(), Instant.now());
         if (duration.toMinutes() > 30L) {
             //存在但超时
-            return false;
+            return "overtime";
         }
         user.setCheckCode(null);
         userMapper.updateByPrimaryKey(user);
         //检查邮箱后为用户添加一个默认的患者身份
         userRoleMapper.insert(UserRole.builder().userId(user.getId()).roleId(4).build());
-        return true;
+        return "checked";
     }
 
     @Override

@@ -2,11 +2,12 @@ package cn.sau.sauoh.web;
 
 import cn.sau.sauoh.entity.User;
 import cn.sau.sauoh.service.AuthService;
+import cn.sau.sauoh.web.err.CustomBadRequestException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -16,7 +17,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/auth")
-public class AuthController {
+public class AuthRest {
 
     private AuthService authService;
 
@@ -27,18 +28,23 @@ public class AuthController {
 
     @ExceptionHandler()
     @PostMapping("/register")
-    public @ResponseBody User userRegister(@RequestBody Map<String, String> registerUser) {
+    public @ResponseBody
+    User userRegister(@RequestBody Map<String, String> registerUser) {
+        //这里不使用 User直接转化是因为 password 字段使用了 JsonIgnore 注解
         String username = registerUser.get("username");
         String email = registerUser.get("email");
         String password = registerUser.get("password");
-        //todo 对上面三个值进行验证
-
+        if (username == null || email == null || password == null) {
+            throw new CustomBadRequestException("username, email and password all required");
+        }
         return authService.userRegisterProcess(User.builder().username(username).email(email).password(password).build());
     }
 
     @GetMapping("/checkaddress")
-    public String checkEmailAddressProcess(@RequestParam String checkcode) {
-        authService.checkEmailAddressProcess(checkcode);
-        return "registered";
+    public @ResponseBody Map<String, String> checkEmailAddressProcess(@RequestParam String checkcode) {
+        String msg = authService.checkEmailAddressProcess(checkcode);
+        Map<String, String> response = new HashMap<>();
+        response.put("result", msg);
+        return response;
     }
 }

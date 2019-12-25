@@ -38,12 +38,12 @@ public interface AuthService {
     boolean checkCodeAvailable(String checkCode);
 
     /**
-     * 检查邮箱地址的相关过程，返回的结果表示是否处理成功
+     * 检查邮箱地址的相关过程，返回的结果表示处理后的结果
      *
      * @param checkCode checkCode
-     * @return true表示处理成功，false表示处理失败（可能的原因有：checkCode不存在或验证时间已过）
+     * @return noExist 表示checkCode不存在，未执行任何处理过程；checked 表示处理结束；overtime 表示超过验证时间
      */
-    boolean checkEmailAddressProcess(String checkCode);
+    String checkEmailAddressProcess(String checkCode);
 
     /**
      * 删除指定用户
