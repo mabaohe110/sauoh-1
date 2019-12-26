@@ -1,19 +1,19 @@
 package cn.sau.sauoh.repository;
 
 import cn.sau.sauoh.entity.UserRole;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
+/**
+ * 
+ * 
+ * @author nullptr
+ * @email justitacsl@outlook.com
+ * @date 2019-12-25 19:33:27
+ */
+@Mapper
 @Repository
-public interface UserRoleMapper {
-    int deleteByUser(Integer id);
-
-    int insert(UserRole record);
-
-    List<UserRole> selectAllByUser(Integer id);
-
-    List<UserRole> selectAll();
-
-    int deleteByPrimaryKey(int user_id, int role_id);
+public interface UserRoleMapper extends BaseMapper<UserRole> {
+	
 }

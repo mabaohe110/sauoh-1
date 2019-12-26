@@ -1,20 +1,39 @@
 package cn.sau.sauoh.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import java.io.Serializable;
+
+/**
+ * 
+ * 
+ * @author nullptr
+ * @email justitacsl@outlook.com
+ * @date 2019-12-25 19:33:28
+ */
 @Data
-public class Patient {
-    private Integer id;
-    private Integer userId;
-    private String name;
-    private String sex;
+@TableName("patient")
+public class Patient implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-    public Patient(Integer userId, String name, String sex) {
-        this.userId = userId;
-        this.name = name;
-        this.sex = sex;
-    }
+	/**
+	 * 
+	 */
+	@TableId
+	private Integer id;
+	/**
+	 * 
+	 */
+	private Integer userId;
+	/**
+	 * 
+	 */
+	private String name;
+	/**
+	 * 
+	 */
+	private String sex;
 
-    public Patient() {
-    }
 }

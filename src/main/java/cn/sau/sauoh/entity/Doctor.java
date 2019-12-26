@@ -1,37 +1,65 @@
 package cn.sau.sauoh.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Date;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class Doctor {
-    private Integer id;
-    private Integer userId;
-    private String name;
-    private String sex;
-    private String phone;
-    private Date workedTime;
-    private String level;
-    private String hospital;
-    private Integer departmentId;
-    private Boolean checked;
 
-    public Doctor(Integer userId, String name, String sex, String phone, Date workedTime, String level, String hospital, Integer departmentId, Boolean checked) {
-        this.userId = userId;
-        this.name = name;
-        this.sex = sex;
-        this.phone = phone;
-        this.workedTime = workedTime;
-        this.level = level;
-        this.hospital = hospital;
-        this.departmentId = departmentId;
-        this.checked = checked;
-    }
+/**
+ * 
+ * 
+ * @author nullptr
+ * @email justitacsl@outlook.com
+ * @date 2019-12-25 19:33:28
+ */
+@Data
+@TableName("doctor")
+public class Doctor implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * 
+	 */
+	@TableId
+	private Integer id;
+	/**
+	 * 
+	 */
+	private Integer userId;
+	/**
+	 * 
+	 */
+	private String name;
+	/**
+	 * 
+	 */
+	private String sex;
+	/**
+	 * 
+	 */
+	private String phone;
+	/**
+	 * 
+	 */
+	private Date workedTime;
+	/**
+	 * 
+	 */
+	private String level;
+	/**
+	 * 
+	 */
+	private String hospital;
+	/**
+	 * 
+	 */
+	private Integer departmentId;
+	/**
+	 * 
+	 */
+	private Integer checked;
+
 }
