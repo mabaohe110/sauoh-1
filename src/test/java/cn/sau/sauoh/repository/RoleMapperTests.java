@@ -7,20 +7,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 /**
  * @author nullptr
- * @date 2019/12/24 21:26
+ * @date 2019/12/26 16:35
  */
 @Slf4j
 @SpringBootTest
 public class RoleMapperTests {
 
-    private RoleMapper mapper;
     @Autowired
-    public void setMapper(RoleMapper mapper) {
-        this.mapper = mapper;
-    }
+    private RoleMapper mapper;
 
     @Test
-    void selectTest(){
-      log.info(mapper.selectAllByUserId(55).toString());
+    void seleteTest() {
+        mapper.selectAllByUserId(1).forEach(role -> log.info(role.toString()));
     }
 }
