@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author nullptr
  */
 @SpringBootApplication
-
 public class SauohApplication {
 
 	public static void main(String[] args) {
