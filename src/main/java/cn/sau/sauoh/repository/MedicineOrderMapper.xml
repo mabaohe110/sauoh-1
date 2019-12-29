@@ -3,7 +3,7 @@
 
 <mapper namespace="cn.sau.sauoh.repository.MedicineOrderMapper">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="cn.sau.sauoh.entity.MedicineOrder" id="medicineOrderMap">
         <result property="id" column="id"/>
         <result property="medicalRecordId" column="medical_record_id"/>
@@ -11,9 +11,10 @@
         <result property="medicineNum" column="medicine_num"/>
     </resultMap>
 
-<!--    int deleteAllByRecordId(Integer id);-->
     <delete id="deleteAllByRecordId" parameterType="java.lang.Integer">
-        DELETE FROM medicine_order WHERE medical_record_id = #{recordId, javaType=INTEGER};
+        DELETE
+        FROM medicine_order
+        WHERE medical_record_id = #{recordId, javaType=INTEGER};
     </delete>
 
 </mapper>
