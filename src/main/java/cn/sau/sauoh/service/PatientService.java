@@ -1,7 +1,10 @@
 package cn.sau.sauoh.service;
 
+import cn.sau.sauoh.web.vm.PatientVM;
 import com.baomidou.mybatisplus.extension.service.IService;
 import cn.sau.sauoh.entity.Patient;
+
+import java.util.Map;
 
 /**
  * 
@@ -12,5 +15,6 @@ import cn.sau.sauoh.entity.Patient;
  */
 public interface PatientService extends IService<Patient> {
 
+    boolean save(PatientVM vm);
 }
 
