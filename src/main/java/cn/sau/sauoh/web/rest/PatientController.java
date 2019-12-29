@@ -2,18 +2,21 @@ package cn.sau.sauoh.web.rest;
 
 import cn.sau.sauoh.entity.Patient;
 import cn.sau.sauoh.service.PatientService;
+import cn.sau.sauoh.utils.Constant;
 import cn.sau.sauoh.utils.R;
+import cn.sau.sauoh.utils.RRException;
+import cn.sau.sauoh.web.vm.PatientVM;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 
 /**
  * @author nullptr
- * @email justitacsl@outlook.com
  * @date 2019-12-25 19:33:28
  */
 @RestController
@@ -30,10 +33,15 @@ public class PatientController {
                   @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
                   @RequestParam(value = "sortBy", defaultValue = "id") String sortBy,
                   @RequestParam(value = "sortOf", defaultValue = "ASC") String sortOf) {
+        if ((!Constant.ASC.equalsIgnoreCase(sortOf))) {
+            if ((!Constant.DESC.equalsIgnoreCase(sortOf))) {
+                throw new RRException("sortOf allow ASC or DESC", HttpServletResponse.SC_BAD_REQUEST);
+            }
+        }
         Page<Patient> page = new Page<>(pageNum, pageSize);
-        if ("ASC".equals(sortOf)) {
+        if (Constant.ASC.equalsIgnoreCase(sortOf)) {
             page.addOrder(OrderItem.asc(sortBy));
-        } else {
+        } else if (Constant.DESC.equalsIgnoreCase(sortOf)) {
             page.addOrder(OrderItem.desc(sortBy));
         }
         patientService.page(page);
@@ -47,7 +55,6 @@ public class PatientController {
     @GetMapping("/info/{id}")
     public R info(@PathVariable("id") Integer id) {
         Patient patient = patientService.getById(id);
-
         return R.ok().put("patient", patient);
     }
 
@@ -55,30 +62,32 @@ public class PatientController {
      * 保存
      */
     @PostMapping("/save")
-    public R save(@RequestBody Patient patient) {
+    public R save(@Valid @RequestBody Patient patient, HttpServletResponse response) {
         patientService.save(patient);
+        return R.created(response).put("patient", patient);
+    }
 
-        return R.ok();
+    @PostMapping("/savevm")
+    public R savevm(@Valid @RequestBody PatientVM vm, HttpServletResponse response) {
+        patientService.save(vm);
+        return R.created(response).put("patientvm", vm);
     }
 
     /**
      * 修改
      */
     @PutMapping("/update")
-    public R update(@RequestBody Patient patient) {
+    public R update(@RequestBody Patient patient, HttpServletResponse response) {
         patientService.updateById(patient);
-
-        return R.ok();
+        return R.noContent(response);
     }
 
     /**
      * 删除
      */
-    @DeleteMapping("/delete")
-    public R delete(@RequestBody Integer[] ids) {
-        patientService.removeByIds(Arrays.asList(ids));
-
-        return R.ok();
+    @DeleteMapping("/delete/{id}")
+    public R delete(@PathVariable Integer id, HttpServletResponse response) {
+        patientService.removeById(id);
+        return R.noContent(response);
     }
-
 }
