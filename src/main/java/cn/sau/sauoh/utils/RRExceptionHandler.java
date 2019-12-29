@@ -13,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
 
 /**
  * 异常处理器
@@ -25,7 +26,8 @@ public class RRExceptionHandler implements HandlerExceptionResolver {
     public ModelAndView resolveException(HttpServletRequest request,
                                          HttpServletResponse response, Object handler, Exception ex) {
 
-        try {
+        try (PrintWriter writer = response.getWriter())
+        {
             response.setContentType("application/json;charset=utf-8");
             response.setCharacterEncoding("utf-8");
 
@@ -53,7 +55,8 @@ public class RRExceptionHandler implements HandlerExceptionResolver {
             r.put("code", eCode);
             r.put("msg", eMsg);
             String json = JSON.toJSONString(r);
-            response.getWriter().print(json);
+            writer.print(json);
+            writer.flush();
             response.sendError(eCode, eMsg);
             //记录异常日志
             logger.error(ex.getMessage(), ex);
