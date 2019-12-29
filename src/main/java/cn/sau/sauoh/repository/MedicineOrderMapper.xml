@@ -1,36 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="cn.sau.sauoh.repository.MedicineOrderMapper">
-  <resultMap id="BaseResultMap" type="cn.sau.sauoh.entity.MedicineOrder">
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="medical_record_id" jdbcType="INTEGER" property="medicalRecordId" />
-    <result column="medicine_id" jdbcType="INTEGER" property="medicineId" />
-    <result column="medicine_num" jdbcType="INTEGER" property="medicineNum" />
-  </resultMap>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from medicine_order
-    where id = #{id,jdbcType=INTEGER}
-  </delete>
-  <insert id="insert" parameterType="cn.sau.sauoh.entity.MedicineOrder">
-    insert into medicine_order (id, medical_record_id, medicine_id, 
-      medicine_num)
-    values (#{id,jdbcType=INTEGER}, #{medicalRecordId,jdbcType=INTEGER}, #{medicineId,jdbcType=INTEGER}, 
-      #{medicineNum,jdbcType=INTEGER})
-  </insert>
-  <update id="updateByPrimaryKey" parameterType="cn.sau.sauoh.entity.MedicineOrder">
-    update medicine_order
-    set medical_record_id = #{medicalRecordId,jdbcType=INTEGER},
-      medicine_id = #{medicineId,jdbcType=INTEGER},
-      medicine_num = #{medicineNum,jdbcType=INTEGER}
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select id, medical_record_id, medicine_id, medicine_num
-    from medicine_order
-    where id = #{id,jdbcType=INTEGER}
-  </select>
-  <select id="selectAll" resultMap="BaseResultMap">
-    select id, medical_record_id, medicine_id, medicine_num
-    from medicine_order
-  </select>
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="cn.sau.sauoh.entity.MedicineOrder" id="medicineOrderMap">
+        <result property="id" column="id"/>
+        <result property="medicalRecordId" column="medical_record_id"/>
+        <result property="medicineId" column="medicine_id"/>
+        <result property="medicineNum" column="medicine_num"/>
+    </resultMap>
+
+    <delete id="deleteAllByRecordId" parameterType="java.lang.Integer">
+        DELETE
+        FROM medicine_order
+        WHERE medical_record_id = #{recordId, javaType=INTEGER};
+    </delete>
+
 </mapper>

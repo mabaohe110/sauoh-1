@@ -1,39 +1,24 @@
 package cn.sau.sauoh.repository;
 
-import cn.sau.sauoh.entity.Role;
 import cn.sau.sauoh.entity.User;
-import org.apache.ibatis.annotations.Select;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * 
+ * 
+ * @author nullptr
+ * @email justitacsl@outlook.com
+ * @date 2019-12-25 19:33:28
+ */
+@Mapper
 @Repository
-public interface UserMapper {
-    int deleteByPrimaryKey(Integer id);
-
-    /**
-     * insert data to user table
-     * @param record data
-     * @return 数据库受影响行数，应该为 1
-     */
-    int insert(User record);
-
-    User selectByPrimaryKey(Integer id);
-
-    User selectByUsername(String username);
-
-    User selectByEmail(String email);
-
-    List<User> selectAll();
-
-    int updateByPrimaryKey(User record);
-
-    /**
-     * insert data to user table(return primary key)
-     * @param record data
-     * @return 数据库中改变的行数
-     */
-    int insertUser(User record);
+public interface UserMapper extends BaseMapper<User> {
 
     /**
      * 检查指定的 checkCode 是否存在
@@ -42,7 +27,14 @@ public interface UserMapper {
      */
     boolean checkCodeExist(String checkCode);
 
-    List<User> selectCityAdmin();
-
+    /**
+     * 找到 checkCode 对应的user
+     * @param checkCode 校验码
+     * @return 输入的校验码对应的 User对象
+     */
     User selectByCheckCode(String checkCode);
+
+    User selectByUsername(String username);
+
+    User selectByEmail(String email);
 }

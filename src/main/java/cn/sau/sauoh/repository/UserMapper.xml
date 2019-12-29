@@ -1,72 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="cn.sau.sauoh.repository.UserMapper">
-    <resultMap id="BaseResultMap" type="cn.sau.sauoh.entity.User">
-        <id column="id" jdbcType="INTEGER" property="id"/>
-        <result column="username" jdbcType="VARCHAR" property="username"/>
-        <result column="email" jdbcType="VARCHAR" property="email"/>
-        <result column="password" jdbcType="VARCHAR" property="password"/>
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <result column="check_code" jdbcType="VARCHAR" property="checkCode"/>
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="cn.sau.sauoh.entity.User" id="userMap">
+        <result property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="email" column="email"/>
+        <result property="password" column="password"/>
+        <result property="checkCode" column="check_code"/>
+        <result property="createTime" column="create_time"/>
     </resultMap>
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-        delete
-        from user
-        where id = #{id,jdbcType=INTEGER}
-    </delete>
-    <insert id="insert" parameterType="cn.sau.sauoh.entity.User">
-        insert into user (id, username, email, password, create_time, check_code)
-        values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{email, jdbcType=VARCHAR},
-                #{password,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{checkCode,jdbcType=VARCHAR})
-    </insert>
-    <update id="updateByPrimaryKey" parameterType="cn.sau.sauoh.entity.User">
-        update user
-        set username    = #{username,jdbcType=VARCHAR},
-            email       = #{email,jdbcType=VARCHAR},
-            password    = #{password,jdbcType=VARCHAR},
-            create_time = #{createTime,jdbcType=TIMESTAMP},
-            check_code  = #{checkCode,jdbcType=VARCHAR}
-        where id = #{id,jdbcType=INTEGER}
-    </update>
-    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-        select id, username, email, password, create_time, check_code
-        from user
-        where id = #{id,jdbcType=INTEGER}
-    </select>
-    <select id="selectByUsername" parameterType="java.lang.String" resultMap="BaseResultMap">
-        select id, username, email, password, create_time, check_code
-        from user
-        where username = #{username,jdbcType=VARCHAR}
-    </select>
-    <select id="selectByEmail" parameterType="java.lang.String" resultMap="BaseResultMap">
-        select id, username, email, password, create_time, check_code
-        from user
-        where email = #{email,jdbcType=VARCHAR}
-    </select>
-    <select id="selectAll" resultMap="BaseResultMap">
-        select id, username, email, password, create_time, check_code
-        from user
-    </select>
-    <insert id="insertUser" useGeneratedKeys="true" keyProperty="id"
-            parameterType="cn.sau.sauoh.entity.User">
-        insert into user (id, username, email, password, create_time, check_code)
-        values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR},
-                #{password,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{checkCode,jdbcType=VARCHAR})
-    </insert>
-    <select id="selectCityAdmin" resultMap="BaseResultMap">
-        SELECT u.*
-        FROM user_role r
-                 right join user u on r.user_id = u.id
-        where r.role_id = 2;
-    </select>
+
     <select id="checkCodeExist" resultType="java.lang.Boolean" parameterType="java.lang.String">
         SELECT COUNT(*)
         FROM user
         WHERE check_code = #{checkCode,jdbcType=VARCHAR};
     </select>
-    <select id="selectByCheckCode" resultMap="BaseResultMap" parameterType="java.lang.String">
+    <select id="selectByCheckCode" resultMap="userMap" parameterType="java.lang.String">
         select id, username, email, password, create_time, check_code
         from user
         where check_code = #{checkCode, jdbcType=VARCHAR};
     </select>
+
+    <select id="selectByUsername" parameterType="java.lang.String" resultMap="userMap">
+        select id, username, email, password, create_time, check_code
+        from user
+        where username = #{username,jdbcType=VARCHAR}
+    </select>
+    <select id="selectByEmail" parameterType="java.lang.String" resultMap="userMap">
+        select id, username, email, password, create_time, check_code
+        from user
+        where email = #{email,jdbcType=VARCHAR}
+    </select>
+
 </mapper>
