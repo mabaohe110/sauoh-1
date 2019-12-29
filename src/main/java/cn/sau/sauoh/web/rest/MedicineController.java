@@ -2,13 +2,15 @@ package cn.sau.sauoh.web.rest;
 
 import cn.sau.sauoh.entity.Medicine;
 import cn.sau.sauoh.service.MedicineService;
+import cn.sau.sauoh.utils.Constant;
 import cn.sau.sauoh.utils.R;
+import cn.sau.sauoh.utils.RRException;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
+import javax.servlet.http.HttpServletResponse;
 
 
 /**
@@ -30,14 +32,22 @@ public class MedicineController {
                   @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
                   @RequestParam(value = "sortBy", defaultValue = "id") String sortBy,
                   @RequestParam(value = "sortOf", defaultValue = "ASC") String sortOf) {
-        Page<Medicine> page = new Page<>(pageNum, pageSize);
-        if ("ASC".equals(sortOf)) {
-            page.addOrder(OrderItem.asc(sortBy));
-        } else {
-            page.addOrder(OrderItem.desc(sortBy));
+        if ((!Constant.SORTOF_ASC.equalsIgnoreCase(sortOf))) {
+            if ((!Constant.SORTOF_DESC.equalsIgnoreCase(sortOf))) {
+                throw new RRException("sortOf allow ASC or DESC", HttpServletResponse.SC_BAD_REQUEST);
+            }
         }
-        medicineService.page(page);
-        return R.ok().put("page", page);
+        Page<Medicine> page = new Page<>(pageNum, pageSize);
+        if (Constant.SORTOF_ASC.equalsIgnoreCase(sortOf)) {
+            page.addOrder(OrderItem.asc(sortBy));
+            medicineService.page(page);
+            return R.ok().put("page", page);
+        } else if (Constant.SORTOF_DESC.equalsIgnoreCase(sortOf)) {
+            page.addOrder(OrderItem.desc(sortBy));
+            medicineService.page(page);
+            return R.ok().put("page", page);
+        }
+        throw new RRException("sortOf:alone allow ASC or DESC", HttpServletResponse.SC_BAD_REQUEST);
     }
 
 
@@ -47,7 +57,6 @@ public class MedicineController {
     @GetMapping("/info/{id}")
     public R info(@PathVariable("id") Integer id) {
         Medicine medicine = medicineService.getById(id);
-
         return R.ok().put("medicine", medicine);
     }
 
@@ -55,30 +64,27 @@ public class MedicineController {
      * 保存
      */
     @PostMapping("/save")
-    public R save(@RequestBody Medicine medicine) {
+    public R save(@RequestBody Medicine medicine, HttpServletResponse response) {
         medicineService.save(medicine);
-
-        return R.ok();
+        return R.created(response).put("medicine", medicine);
     }
 
     /**
      * 修改
      */
     @PutMapping("/update")
-    public R update(@RequestBody Medicine medicine) {
+    public R update(@RequestBody Medicine medicine, HttpServletResponse response) {
         medicineService.updateById(medicine);
-
-        return R.ok();
+        return R.noContent(response);
     }
 
     /**
      * 删除
      */
-    @DeleteMapping("/delete")
-    public R delete(@RequestBody Integer[] ids) {
-        medicineService.removeByIds(Arrays.asList(ids));
-
-        return R.ok();
+    @DeleteMapping("/delete/{id}")
+    public R delete(@PathVariable Integer id, HttpServletResponse response) {
+        medicineService.removeById(id);
+        return R.noContent(response);
     }
 
 }

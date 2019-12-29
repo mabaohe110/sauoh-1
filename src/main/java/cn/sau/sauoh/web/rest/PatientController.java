@@ -33,15 +33,15 @@ public class PatientController {
                   @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
                   @RequestParam(value = "sortBy", defaultValue = "id") String sortBy,
                   @RequestParam(value = "sortOf", defaultValue = "ASC") String sortOf) {
-        if ((!Constant.ASC.equalsIgnoreCase(sortOf))) {
-            if ((!Constant.DESC.equalsIgnoreCase(sortOf))) {
+        if ((!Constant.SORTOF_ASC.equalsIgnoreCase(sortOf))) {
+            if ((!Constant.SORTOF_DESC.equalsIgnoreCase(sortOf))) {
                 throw new RRException("sortOf allow ASC or DESC", HttpServletResponse.SC_BAD_REQUEST);
             }
         }
         Page<Patient> page = new Page<>(pageNum, pageSize);
-        if (Constant.ASC.equalsIgnoreCase(sortOf)) {
+        if (Constant.SORTOF_ASC.equalsIgnoreCase(sortOf)) {
             page.addOrder(OrderItem.asc(sortBy));
-        } else if (Constant.DESC.equalsIgnoreCase(sortOf)) {
+        } else if (Constant.SORTOF_DESC.equalsIgnoreCase(sortOf)) {
             page.addOrder(OrderItem.desc(sortBy));
         }
         patientService.page(page);
@@ -77,7 +77,7 @@ public class PatientController {
      * 修改
      */
     @PutMapping("/update")
-    public R update(@RequestBody Patient patient, HttpServletResponse response) {
+    public R update(@Valid @RequestBody Patient patient, HttpServletResponse response) {
         patientService.updateById(patient);
         return R.noContent(response);
     }
