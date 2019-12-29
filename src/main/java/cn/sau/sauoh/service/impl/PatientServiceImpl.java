@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -102,6 +103,9 @@ public class PatientServiceImpl extends ServiceImpl<PatientMapper, Patient> impl
     @Override
     @Transactional(rollbackFor = {DuplicateKeyException.class, RRException.class})
     public boolean updateById(Patient patient) {
+        if (patient.getId() == null) {
+            throw RRException.badRequest("修改资源时必须指明id字段");
+        }
         Patient saved = patientMapper.selectById(patient.getId());
         if (saved == null) {
             throw RRException.notFound("patientId 不存在");
@@ -130,6 +134,13 @@ public class PatientServiceImpl extends ServiceImpl<PatientMapper, Patient> impl
         //删除user表
         userMapper.deleteById(patient.getUserId());
         log.warn("delete patient:" + patient.toString());
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = RRException.class)
+    public boolean removeByIds(Collection<? extends Serializable> idList) {
+        idList.forEach(this::removeById);
         return true;
     }
 }

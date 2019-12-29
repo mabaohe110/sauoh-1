@@ -7,6 +7,7 @@ import lombok.Data;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 /**
  * patient + user
@@ -32,6 +33,10 @@ public class PatientVM {
     private String patientName;
     @NotNull
     private String sex;
+    @NotNull
+    private String phone;
+    @NotNull
+    private Date birthday;
 
     @JsonIgnore
     public User getUser() {
@@ -40,6 +45,7 @@ public class PatientVM {
 
     @JsonIgnore
     public Patient getPatient() {
-        return Patient.builder().id(patientId).userId(userId).name(patientName).sex(sex).build();
+        return Patient.builder().id(patientId).userId(userId).
+                name(patientName).sex(sex).phone(phone).birthday(birthday).build();
     }
 }
