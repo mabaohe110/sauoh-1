@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -27,10 +28,13 @@ public class Medicine implements Serializable {
 	/**
 	 * 
 	 */
+	@NotNull
 	private String name;
 	/**
 	 * 
 	 */
 	private BigDecimal price;
 
+
+	private String description;
 }
