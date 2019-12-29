@@ -20,5 +20,9 @@ public interface MedicalRecordMapper extends BaseMapper<MedicalRecord> {
 
     List<MedicalRecord> selectAllRecordsByPatientId(Integer patientId);
 
+    List<MedicalRecord> selectAllRecordsByDoctorId(Integer doctorId);
+
     int deleteAllByPatientId(Integer patientId);
+
+    int deleteAllByDoctorId(Integer id);
 }

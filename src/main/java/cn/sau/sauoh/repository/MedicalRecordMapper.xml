@@ -18,10 +18,22 @@
         WHERE patient_id = #{patientId, javaType=INTEGER};
     </select>
 
+    <select id="selectAllRecordsByDoctorId" parameterType="java.lang.Integer" resultMap="medicalRecordMap">
+        SELECT id, patient_id, doctor_id, patient_status, doctor_advice
+        FROM medical_record
+        WHERE doctor_id = #{doctorId, javaType=INTEGER};
+    </select>
+
     <delete id="deleteAllByPatientId" parameterType="java.lang.Integer">
         DELETE
         FROM medical_record
         WHERE patient_id = #{patientId, javaType=INTEGER};
+    </delete>
+
+    <delete id="deleteAllByDoctorId" parameterType="java.lang.Integer">
+        DELETE
+        FROM medical_record
+        WHERE doctor_id = #{doctorId, javaType=INTEGER};
     </delete>
 
 </mapper>

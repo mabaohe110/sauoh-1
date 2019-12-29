@@ -20,12 +20,6 @@ public interface UserRoleMapper extends BaseMapper<UserRole> {
 
     List<UserRole> selectAllByUserId(Integer userId);
 
-    /**
-     *
-     * @param userId
-     * @return
-     */
-    int deleteByUserIdAndRoleId(Integer userId, Integer roleId);
+    int deleteAllByUserId(Integer userId);
 
-    int deleteAllRoleByUserId(Integer userId);
 }
