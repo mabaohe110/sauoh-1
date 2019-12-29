@@ -3,19 +3,19 @@ package cn.sau.sauoh.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Builder;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
 
 /**
- * 
- * 
  * @author nullptr
- * @email justitacsl@outlook.com
  * @date 2019-12-25 19:33:28
  */
+@Builder
 @Data
 @TableName("doctor")
 public class Doctor implements Serializable {
@@ -29,34 +29,42 @@ public class Doctor implements Serializable {
 	/**
 	 * 
 	 */
+	@NotNull
 	private Integer userId;
 	/**
 	 * 
 	 */
+	@NotNull
 	private String name;
 	/**
 	 * 
 	 */
+	@NotNull
 	private String sex;
 	/**
 	 * 
 	 */
+	@NotNull
 	private String phone;
 	/**
 	 * 
 	 */
+	@NotNull
 	private Date workedTime;
 	/**
 	 * 
 	 */
+	@NotNull
 	private String level;
 	/**
 	 * 
 	 */
+	@NotNull
 	private String hospital;
 	/**
 	 * 
 	 */
+	@NotNull
 	private Integer departmentId;
 	/**
 	 * 

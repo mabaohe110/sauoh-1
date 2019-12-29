@@ -6,13 +6,13 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Builder;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
  * 
  * 
  * @author nullptr
- * @email justitacsl@outlook.com
  * @date 2019-12-25 19:33:28
  */
 @Data
@@ -29,14 +29,17 @@ public class Patient implements Serializable {
 	/**
 	 * 
 	 */
+	@NotNull
 	private Integer userId;
 	/**
 	 * 
 	 */
+	@NotNull
 	private String name;
 	/**
 	 * 
 	 */
+	@NotNull
 	private String sex;
 
 }
