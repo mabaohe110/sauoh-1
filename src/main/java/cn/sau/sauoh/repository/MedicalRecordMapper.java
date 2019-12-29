@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * 
  * 
@@ -15,5 +17,8 @@ import org.springframework.stereotype.Repository;
 @Mapper
 @Repository
 public interface MedicalRecordMapper extends BaseMapper<MedicalRecord> {
-	
+
+    List<MedicalRecord> selectAllRecordsByPatientId(Integer patientId);
+
+    int deleteAllByPatientId(Integer patientId);
 }

@@ -3,7 +3,7 @@
 
 <mapper namespace="cn.sau.sauoh.repository.MedicalRecordMapper">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="cn.sau.sauoh.entity.MedicalRecord" id="medicalRecordMap">
         <result property="id" column="id"/>
         <result property="patientId" column="patient_id"/>
@@ -12,5 +12,16 @@
         <result property="doctorAdvice" column="doctor_advice"/>
     </resultMap>
 
+    <select id="selectAllRecordsByPatientId" parameterType="java.lang.Integer" resultMap="medicalRecordMap">
+        SELECT id, patient_id, doctor_id, patient_status, doctor_advice
+        FROM medical_record
+        WHERE patient_id = #{patientId, javaType=INTEGER};
+    </select>
+
+    <delete id="deleteAllByPatientId" parameterType="java.lang.Integer">
+        DELETE
+        FROM medical_record
+        WHERE patient_id = #{patientId, javaType=INTEGER};
+    </delete>
 
 </mapper>

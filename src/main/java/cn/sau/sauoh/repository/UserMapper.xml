@@ -13,5 +13,26 @@
         <result property="createTime" column="create_time"/>
     </resultMap>
 
+    <select id="checkCodeExist" resultType="java.lang.Boolean" parameterType="java.lang.String">
+        SELECT COUNT(*)
+        FROM user
+        WHERE check_code = #{checkCode,jdbcType=VARCHAR};
+    </select>
+    <select id="selectByCheckCode" resultMap="userMap" parameterType="java.lang.String">
+        select id, username, email, password, create_time, check_code
+        from user
+        where check_code = #{checkCode, jdbcType=VARCHAR};
+    </select>
+
+    <select id="selectByUsername" parameterType="java.lang.String" resultMap="userMap">
+        select id, username, email, password, create_time, check_code
+        from user
+        where username = #{username,jdbcType=VARCHAR}
+    </select>
+    <select id="selectByEmail" parameterType="java.lang.String" resultMap="userMap">
+        select id, username, email, password, create_time, check_code
+        from user
+        where email = #{email,jdbcType=VARCHAR}
+    </select>
 
 </mapper>

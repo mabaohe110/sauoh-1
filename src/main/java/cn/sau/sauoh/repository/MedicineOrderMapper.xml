@@ -11,5 +11,9 @@
         <result property="medicineNum" column="medicine_num"/>
     </resultMap>
 
+<!--    int deleteAllByRecordId(Integer id);-->
+    <delete id="deleteAllByRecordId" parameterType="java.lang.Integer">
+        DELETE FROM medicine_order WHERE medical_record_id = #{recordId, javaType=INTEGER};
+    </delete>
 
 </mapper>

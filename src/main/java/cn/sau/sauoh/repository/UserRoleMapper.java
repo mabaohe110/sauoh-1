@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * 
  * 
@@ -15,5 +17,15 @@ import org.springframework.stereotype.Repository;
 @Mapper
 @Repository
 public interface UserRoleMapper extends BaseMapper<UserRole> {
-	
+
+    List<UserRole> selectAllByUserId(Integer userId);
+
+    /**
+     *
+     * @param userId
+     * @return
+     */
+    int deleteByUserIdAndRoleId(Integer userId, Integer roleId);
+
+    int deleteAllRoleByUserId(Integer userId);
 }

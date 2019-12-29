@@ -15,5 +15,11 @@ import org.springframework.stereotype.Repository;
 @Mapper
 @Repository
 public interface MedicineOrderMapper extends BaseMapper<MedicineOrder> {
-	
+
+    /**
+     * 删除一次问诊记录中的所有药品订单
+     * @param recordId
+     * @return
+     */
+    int deleteAllByRecordId(Integer recordId);
 }

@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * 
  * 
@@ -18,4 +20,21 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserMapper extends BaseMapper<User> {
 
+    /**
+     * 检查指定的 checkCode 是否存在
+     * @param checkCode 校验码
+     * @return true表示存在，false表示不存在
+     */
+    boolean checkCodeExist(String checkCode);
+
+    /**
+     * 找到 checkCode 对应的user
+     * @param checkCode 校验码
+     * @return 输入的校验码对应的 User对象
+     */
+    User selectByCheckCode(String checkCode);
+
+    User selectByUsername(String username);
+
+    User selectByEmail(String email);
 }
