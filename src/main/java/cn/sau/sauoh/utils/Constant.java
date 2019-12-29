@@ -9,7 +9,11 @@ package cn.sau.sauoh.utils;
  */
 public class Constant {
 
-    public static final String ASC = "ASC";
-    public static final String DESC = "DESC";
+    public static final String SORTOF_ASC = "ASC";
+    public static final String SORTOF_DESC = "DESC";
 
+    public static final Integer ROLE_CODE_PROVINCE_ADMIN = 1;
+    public static final Integer ROLE_CODE_CITY_ADMIN = 2;
+    public static final Integer ROLE_CODE_DOCTOR = 3;
+    public static final Integer ROLE_CODE_PATIENT = 4;
 }
