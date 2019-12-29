@@ -1,5 +1,6 @@
 package cn.sau.sauoh.service;
 
+import cn.sau.sauoh.web.vm.DoctorVM;
 import com.baomidou.mybatisplus.extension.service.IService;
 import cn.sau.sauoh.entity.Doctor;
 
@@ -12,5 +13,6 @@ import cn.sau.sauoh.entity.Doctor;
  */
 public interface DoctorService extends IService<Doctor> {
 
+    boolean save(DoctorVM vm);
 }
 

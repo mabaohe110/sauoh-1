@@ -6,6 +6,7 @@ import cn.sau.sauoh.entity.User;
 import cn.sau.sauoh.entity.UserRole;
 import cn.sau.sauoh.repository.*;
 import cn.sau.sauoh.service.PatientService;
+import cn.sau.sauoh.utils.Constant;
 import cn.sau.sauoh.utils.RRException;
 import cn.sau.sauoh.web.vm.PatientVM;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -24,8 +25,6 @@ import java.util.List;
  */
 @Service("patientService")
 public class PatientServiceImpl extends ServiceImpl<PatientMapper, Patient> implements PatientService {
-
-    private static final int PATIENT_CODE = 4;
 
     private UserMapper userMapper;
     private PatientMapper patientMapper;
@@ -69,19 +68,19 @@ public class PatientServiceImpl extends ServiceImpl<PatientMapper, Patient> impl
     }
 
     @Override
-    @Transactional(rollbackFor = DuplicateKeyException.class)
+    @Transactional(rollbackFor = {DuplicateKeyException.class, RRException.class})
     public boolean save(Patient patient) {
         Integer userId = patient.getUserId();
         patientMapper.insert(patient);
         //在 user_role 表中插入身份
-        UserRole userRole = UserRole.builder().userId(userId).roleId(PATIENT_CODE).build();
+        UserRole userRole = UserRole.builder().userId(userId).roleId(Constant.ROLE_CODE_PATIENT).build();
         userRoleMapper.insert(userRole);
         //此时的 patient 已经回填了id
         return true;
     }
 
     @Override
-    @Transactional(rollbackFor = DuplicateKeyException.class)
+    @Transactional(rollbackFor = {DuplicateKeyException.class, RRException.class})
     public boolean save(PatientVM vm) {
         //先 user表
         User user = vm.getUser();
@@ -95,12 +94,13 @@ public class PatientServiceImpl extends ServiceImpl<PatientMapper, Patient> impl
         vm.setPatientId(patient.getId());
 
         //最后user_role 表
-        UserRole userRole = UserRole.builder().userId(user.getId()).roleId(PATIENT_CODE).build();
+        UserRole userRole = UserRole.builder().userId(user.getId()).roleId(Constant.ROLE_CODE_PATIENT).build();
         userRoleMapper.insert(userRole);
         return true;
     }
 
     @Override
+    @Transactional(rollbackFor = {DuplicateKeyException.class, RRException.class})
     public boolean updateById(Patient patient) {
         Patient saved = patientMapper.selectById(patient.getId());
         if (saved == null) {
@@ -118,14 +118,14 @@ public class PatientServiceImpl extends ServiceImpl<PatientMapper, Patient> impl
     public boolean removeById(Serializable id) {
         Patient patient = patientMapper.selectById(id);
         if (patient == null) {
-            throw new RRException("patientId not exist", 500);
+            throw RRException.notFound("patientId not exist");
         }
         //删除药品订单和问诊记录
         List<MedicalRecord> records = medicalRecordMapper.selectAllRecordsByPatientId(patient.getId());
         records.forEach(record -> medicineOrderMapper.deleteAllByRecordId(record.getId()));
         medicalRecordMapper.deleteAllByPatientId(patient.getId());
         //删除身份
-        userRoleMapper.deleteByUserIdAndRoleId(patient.getUserId(), PATIENT_CODE);
+        userRoleMapper.deleteAllByUserId(patient.getUserId());
         patientMapper.deleteById(id);
         //删除user表
         userMapper.deleteById(patient.getUserId());

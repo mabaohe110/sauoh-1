@@ -3,6 +3,8 @@ package cn.sau.sauoh.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import cn.sau.sauoh.entity.UserRole;
 
+import java.util.List;
+
 /**
  * 
  *
@@ -12,5 +14,6 @@ import cn.sau.sauoh.entity.UserRole;
  */
 public interface UserRoleService extends IService<UserRole> {
 
+    List<UserRole> getAllByUserId(Integer userId);
 }
 

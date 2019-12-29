@@ -1,7 +1,12 @@
 package cn.sau.sauoh.service;
 
+import cn.sau.sauoh.web.vm.MedicineOrderVM;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import cn.sau.sauoh.entity.MedicineOrder;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -12,5 +17,6 @@ import cn.sau.sauoh.entity.MedicineOrder;
  */
 public interface MedicineOrderService extends IService<MedicineOrder> {
 
+    Map<String, Object> pageToMap(Page<MedicineOrder> page);
 }
 
