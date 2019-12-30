@@ -54,10 +54,11 @@ public class RRExceptionHandler implements HandlerExceptionResolver {
             R r = new R();
             r.put("code", eCode);
             r.put("msg", eMsg);
+            response.sendError(eCode, eMsg);
             String json = JSON.toJSONString(r);
             writer.print(json);
             writer.flush();
-            response.sendError(eCode, eMsg);
+
             //记录异常日志
             logger.error(ex.getMessage(), ex);
         } catch (Exception e) {

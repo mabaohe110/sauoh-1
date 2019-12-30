@@ -3,7 +3,7 @@
 
 <mapper namespace="cn.sau.sauoh.repository.UserMapper">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="cn.sau.sauoh.entity.User" id="userMap">
         <result property="id" column="id"/>
         <result property="username" column="username"/>
@@ -29,6 +29,7 @@
         from user
         where username = #{username,jdbcType=VARCHAR}
     </select>
+
     <select id="selectByEmail" parameterType="java.lang.String" resultMap="userMap">
         select id, username, email, password, create_time, check_code
         from user

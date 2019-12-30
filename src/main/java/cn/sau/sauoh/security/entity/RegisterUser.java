@@ -1,25 +1,41 @@
-package cn.sau.sauoh.security;
+package cn.sau.sauoh.security.entity;
 
 import cn.sau.sauoh.entity.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.List;
 
 /**
- * @author nullptr
- * @date 2019/12/29 18:17
+ * Spring Security 用 UserDetails 抽象用户账号的细节
+ * 实现该接口自定义了账号细节
  */
+@Data
 public class RegisterUser implements UserDetails {
 
+    @NotNull
     private String username;
+    @NotNull
+    @Email
+    private String email;
+    @NotNull
     private String password;
+    @JsonIgnore
+    private Boolean enable;
+    @JsonIgnore
     private List<Role> roles;
 
-    public RegisterUser(String username, String password, List<Role> roles) {
+    public RegisterUser(@NotNull String username, @NotNull @Email String email,
+                        @NotNull String password, Boolean enable, List<Role> roles) {
         this.username = username;
+        this.email = email;
         this.password = password;
+        this.enable = enable;
         this.roles = roles;
     }
 
@@ -29,32 +45,22 @@ public class RegisterUser implements UserDetails {
     }
 
     @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
-    }
-
-    @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return enable;
     }
 }

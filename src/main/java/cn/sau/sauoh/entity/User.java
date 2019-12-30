@@ -1,11 +1,11 @@
 package cn.sau.sauoh.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -16,6 +16,8 @@ import java.util.Date;
  */
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @TableName("user")
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -42,6 +44,7 @@ public class User implements Serializable {
      *
      */
     @JsonIgnore
+    @TableField(fill = FieldFill.UPDATE)
     private String checkCode;
     /**
      *
