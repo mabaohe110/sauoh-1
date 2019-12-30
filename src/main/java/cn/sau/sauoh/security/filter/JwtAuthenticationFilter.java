@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -67,14 +67,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             HttpServletResponse response,
                                             FilterChain chain,
                                             Authentication authentication) {
-
+        //从登陆的数据中获取registerUser，用于生成JwtUser
         RegisterUser registerUser = (RegisterUser) authentication.getPrincipal();
         JwtUser jwtUser = new JwtUser(registerUser, registerUser.getAuthorities());
 
-        List<String> roles = jwtUser.getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+        List<String> roles = jwtUser.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
         // 创建 Token
         String token = JwtTokenUtils.createToken(jwtUser.getUsername(), roles, rememberMe.get());
         // Http Response Header 中返回 Token
@@ -83,9 +80,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.setHeader(SecurityConstants.TOKEN_HEADER, token);
         try (PrintWriter writer = response.getWriter()) {
             //在响应报文中也添加登陆成功的消息
-            Map<String, Object> result = new HashMap<>(5);
+            Map<String, Object> result = new LinkedHashMap<>();
             result.put("code", HttpServletResponse.SC_OK);
             result.put("msg", "success");
+            result.put("roles", roles);
             String json = JSON.toJSONString(result);
             writer.write(json);
         } catch (IOException e) {
@@ -100,7 +98,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authenticationException.getMessage());
         try (PrintWriter writer = response.getWriter()) {
             //在响应报文中添加登陆失败的消息
-            Map<String, Object> result = new HashMap<>(5);
+            Map<String, Object> result = new LinkedHashMap<>();
             result.put("code", HttpServletResponse.SC_UNAUTHORIZED);
             result.put("msg", "fail:" + authenticationException.getMessage());
             String json = JSON.toJSONString(result);
