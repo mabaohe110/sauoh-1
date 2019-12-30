@@ -13,8 +13,6 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import javax.mail.internet.MimeMessage;
 
 /**
- * @author nullptr
- * @date 2019/12/20 15:27
  */
 @Component
 @Slf4j

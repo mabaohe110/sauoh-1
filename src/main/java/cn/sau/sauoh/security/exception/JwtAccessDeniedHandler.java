@@ -1,11 +1,15 @@
 package cn.sau.sauoh.security.exception;
 
+import com.alibaba.fastjson.JSON;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author nullptr
@@ -18,7 +22,16 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
      */
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
-        accessDeniedException = new AccessDeniedException("Sorry you don not enough permissions to access it!");
+        accessDeniedException = new AccessDeniedException("权限不足！");
+        response.setContentType("application/json;charset=utf-8");
+        response.setCharacterEncoding("utf-8");
         response.sendError(HttpServletResponse.SC_FORBIDDEN, accessDeniedException.getMessage());
+        try (PrintWriter writer = response.getWriter()) {
+            Map<String, Object> result = new HashMap<>(5);
+            result.put("code", HttpServletResponse.SC_FORBIDDEN);
+            result.put("msg", "fail:" + accessDeniedException.getMessage());
+            String json = JSON.toJSONString(result);
+            writer.write(json);
+        }
     }
 }

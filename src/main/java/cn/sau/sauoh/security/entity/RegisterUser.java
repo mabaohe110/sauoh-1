@@ -39,26 +39,41 @@ public class RegisterUser implements UserDetails {
         this.roles = roles;
     }
 
+    /**
+     *  返回用户的所有身份
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
     }
 
+    /**
+     *  账户是否失效
+     */
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
+    /**
+     *  账户是否被锁定
+     */
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
+    /**
+     *  认证资格是否过期
+     */
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
+    /**
+     * 是否启用
+     */
     @Override
     public boolean isEnabled() {
         return enable;

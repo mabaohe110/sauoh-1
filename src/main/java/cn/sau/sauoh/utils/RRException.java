@@ -4,10 +4,6 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * 自定义异常
- *
- * @author chenshun
- * @email sunlightcs@gmail.com
- * @date 2016年10月27日 下午10:11:27
  */
 public class RRException extends RuntimeException {
     /**
@@ -21,7 +17,7 @@ public class RRException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     private String msg;
-    private int code = 500;
+    private int code;
 
     public static RRException badRequest(String msg) {
         return new RRException(msg, HttpServletResponse.SC_BAD_REQUEST);
@@ -31,12 +27,12 @@ public class RRException extends RuntimeException {
         return new RRException(msg, HttpServletResponse.SC_FORBIDDEN);
     }
 
-    public static RRException unAuthorized(String msg) {
-        return new RRException(msg, HttpServletResponse.SC_UNAUTHORIZED);
-    }
-
     public static RRException notFound(String msg) {
         return new RRException(msg, HttpServletResponse.SC_NOT_FOUND);
+    }
+
+    public static RRException serverError(String msg){
+        return new RRException(msg, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
     public RRException(String msg, int code) {

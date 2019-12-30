@@ -52,7 +52,7 @@ public class AuthService {
     }
 
     /**
-     * 检查指定的字段处于何种状态（一般用户用户名和邮箱的检查）
+     * 检查指定的字段处于何种状态（一般用于用户名和邮箱的检查）
      *
      * @param filedName 字段名
      * @param filed     字段值
@@ -91,7 +91,7 @@ public class AuthService {
     @Transactional(rollbackFor = DuplicateKeyException.class)
     public User userRegisterProcess(RegisterUser registerUser) {
         User user = new User();
-
+        //生成了一个随机字符串用于checkCode
         String checkCode = RandomStringUtils.randomAlphanumeric(50);
         while (!checkCodeAvailable(checkCode)) {
             checkCode = RandomStringUtils.randomAlphanumeric(50);
@@ -117,7 +117,7 @@ public class AuthService {
      * 检查 checkCode 是否可用，即：如果已存在不可用，不存在才可用。
      *
      * @param checkCode checkCode
-     * @return true 表示可用、fasle 表示不可用
+     * @return true 表示可用、false 表示不可用
      */
     public boolean checkCodeAvailable(String checkCode) {
         return !userMapper.checkCodeExist(checkCode);
