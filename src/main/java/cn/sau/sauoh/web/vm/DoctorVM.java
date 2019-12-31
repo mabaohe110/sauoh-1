@@ -2,6 +2,8 @@ package cn.sau.sauoh.web.vm;
 
 import cn.sau.sauoh.entity.Doctor;
 import cn.sau.sauoh.entity.User;
+import cn.sau.sauoh.utils.DateUtils;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
@@ -10,8 +12,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
- * @author nullptr
- * @date 2019/12/29 15:51
+ * view model for doctor + user
  */
 @Data
 public class DoctorVM {

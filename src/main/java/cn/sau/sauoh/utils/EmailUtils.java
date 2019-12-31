@@ -13,6 +13,7 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import javax.mail.internet.MimeMessage;
 
 /**
+ *
  */
 @Component
 @Slf4j
@@ -36,6 +37,7 @@ public class EmailUtils {
      *
      * @param to      收件人邮箱地址
      * @param subject 邮箱主题
+     * @param temp    邮件使用的模板名
      * @param context 邮箱内容，应使用已装填的 context
      */
     @Async

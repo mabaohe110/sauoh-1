@@ -20,28 +20,16 @@ import java.util.Date;
 public class Patient implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     *
-     */
     @TableId(type = IdType.AUTO)
     private Integer id;
-    /**
-     *
-     */
     @NotNull
     private Integer userId;
-    /**
-     *
-     */
     @NotNull
     private String name;
-    /**
-     *
-     */
     @NotNull
     private String sex;
-
+    @NotNull
     private Date birthday;
-
+    @NotNull
     private String phone;
 }

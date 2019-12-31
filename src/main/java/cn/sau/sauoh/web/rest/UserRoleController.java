@@ -14,11 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 
 
-/**
- * @author nullptr
- * @email justitacsl@outlook.com
- * @date 2019-12-25 19:33:27
- */
 @RestController
 @RequestMapping("/api/userrole")
 public class UserRoleController {

@@ -16,8 +16,7 @@ import javax.validation.Valid;
 
 
 /**
- * @author nullptr
- * @date 2019-12-25 19:33:28
+ * 患者
  */
 @RestController
 @RequestMapping("/api/patient")

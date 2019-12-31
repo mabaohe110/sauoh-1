@@ -6,8 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @author nullptr
- * @date 2019/12/25 20:18
+ * 数据源配置
  */
 @Configuration
 @MapperScan("cn.sau.sauoh.repository")

@@ -9,8 +9,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import javax.mail.MessagingException;
 
 /**
- * @author nullptr
- * @date 2019/12/17 21:09
+ * 邮箱基本配置
  */
 @Configuration
 public class MailConfig {

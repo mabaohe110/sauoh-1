@@ -11,11 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 
 
-/**
- * @author nullptr
- * @email justitacsl@outlook.com
- * @date 2019-12-25 19:33:28
- */
 @RestController
 @RequestMapping("/api/user")
 public class UserController {

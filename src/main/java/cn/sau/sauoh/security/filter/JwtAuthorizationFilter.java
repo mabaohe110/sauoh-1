@@ -21,8 +21,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * @author nullptr
- * @date 2019/12/29 23:16
+ *
  */
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
