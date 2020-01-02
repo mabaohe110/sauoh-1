@@ -21,8 +21,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * @author nullptr
- * @date 2019/12/29 23:16
+ *
  */
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
@@ -55,7 +54,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         String token = authorization.replace(SecurityConstants.TOKEN_PREFIX, "");
         try {
             String username = JwtTokenUtils.getUsernameByToken(token);
-            logger.info("checking username:" + username);
             // 通过 token 获取用户具有的角色
             List<SimpleGrantedAuthority> userRolesByToken = JwtTokenUtils.getUserRolesByToken(token);
             if (!StringUtils.isEmpty(username)) {

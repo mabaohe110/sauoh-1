@@ -1,6 +1,8 @@
 package cn.sau.sauoh.entity;
 
+import cn.sau.sauoh.utils.DateUtils;
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,9 +48,8 @@ public class User implements Serializable {
     @JsonIgnore
     @TableField(fill = FieldFill.UPDATE)
     private String checkCode;
-    /**
-     *
-     */
+
+    @JsonFormat(pattern = DateUtils.DATE_TIME_PATTERN)
     private Date createTime;
 
 }

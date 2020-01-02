@@ -3,7 +3,7 @@
 
 <mapper namespace="cn.sau.sauoh.repository.RoleMapper">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="cn.sau.sauoh.entity.Role" id="roleMap">
         <result property="id" column="id"/>
         <result property="name" column="name"/>
@@ -17,6 +17,12 @@
         WHERE user.id = user_role.user_id
           AND user_role.role_id = role.id
           AND user.id = #{userId,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectRoleIdByValue" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT id
+        FROM role
+        WHERE name = #{value,jdbcType=VARCHAR}
     </select>
 
 </mapper>

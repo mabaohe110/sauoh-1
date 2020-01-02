@@ -52,12 +52,12 @@ public class AuthService {
     }
 
     /**
-     * 检查指定的字段处于何种状态（一般用户用户名和邮箱的检查）
+     * 检查指定的字段处于何种状态（一般用于用户名和邮箱的检查）
      *
      * @param filedName 字段名
      * @param filed     字段值
      * @return 字段处于何种状态的描述，包括：noExist不存在、registered已注册（有数据且check_code为空）、
-     * registering 注册中（有数据、check_code不为空且create_time离当前时间不超过半个小时）
+     * registering 注册中（有数据、check_code不为空且create_time离当前时间不超过一天）
      */
     @Transactional(rollbackFor = SQLException.class)
     public String fieldStatus(String filedName, String filed) {
@@ -73,7 +73,7 @@ public class AuthService {
         Instant createTime = user.getCreateTime().toInstant();
         Duration duration = Duration.between(createTime, Instant.now());
         //注册流程已过，将这条记录删除
-        if (duration.toMinutes() > 30) {
+        if (duration.toHours() > 24) {
             userMapper.deleteById(user);
             return NO_EXIST;
         }
@@ -91,7 +91,7 @@ public class AuthService {
     @Transactional(rollbackFor = DuplicateKeyException.class)
     public User userRegisterProcess(RegisterUser registerUser) {
         User user = new User();
-
+        //生成了一个随机字符串用于checkCode
         String checkCode = RandomStringUtils.randomAlphanumeric(50);
         while (!checkCodeAvailable(checkCode)) {
             checkCode = RandomStringUtils.randomAlphanumeric(50);
@@ -117,7 +117,7 @@ public class AuthService {
      * 检查 checkCode 是否可用，即：如果已存在不可用，不存在才可用。
      *
      * @param checkCode checkCode
-     * @return true 表示可用、fasle 表示不可用
+     * @return true 表示可用、false 表示不可用
      */
     public boolean checkCodeAvailable(String checkCode) {
         return !userMapper.checkCodeExist(checkCode);
@@ -137,7 +137,7 @@ public class AuthService {
         }
         User user = userMapper.selectByCheckCode(checkCode);
         Duration duration = Duration.between(user.getCreateTime().toInstant(), Instant.now());
-        if (duration.toMinutes() > 30L) {
+        if (duration.toHours() > 24) {
             //存在但超时
             return false;
         }

@@ -10,10 +10,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
- * patient + user
- *
- * @author nullptr
- * @date 2019/12/28 21:12
+ * view model for patient + user
  */
 @Data
 public class PatientVM {

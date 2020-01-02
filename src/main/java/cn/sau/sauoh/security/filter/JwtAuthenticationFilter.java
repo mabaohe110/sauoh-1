@@ -5,6 +5,7 @@ import cn.sau.sauoh.security.entity.JwtUser;
 import cn.sau.sauoh.security.entity.LoginUser;
 import cn.sau.sauoh.security.entity.RegisterUser;
 import cn.sau.sauoh.security.utils.JwtTokenUtils;
+import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,12 +18,14 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * @author nullptr
- * @date 2019/12/29 21:12
+ * 基于JWT方式的登陆
  */
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -35,6 +38,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         super.setFilterProcessesUrl(SecurityConstants.AUTH_LOGIN_URL);
     }
 
+    /**
+     * 处理登陆
+     */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
                                                 HttpServletResponse response) throws AuthenticationException {
@@ -61,23 +67,42 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             HttpServletResponse response,
                                             FilterChain chain,
                                             Authentication authentication) {
-
-        //fixme registerUser can't turn to JwtUser
+        //从登陆的数据中获取registerUser，用于生成JwtUser
         RegisterUser registerUser = (RegisterUser) authentication.getPrincipal();
         JwtUser jwtUser = new JwtUser(registerUser, registerUser.getAuthorities());
 
-        List<String> roles = jwtUser.getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+        List<String> roles = jwtUser.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
         // 创建 Token
         String token = JwtTokenUtils.createToken(jwtUser.getUsername(), roles, rememberMe.get());
         // Http Response Header 中返回 Token
+        response.setContentType("application/json;charset=utf-8");
+        response.setCharacterEncoding("utf-8");
         response.setHeader(SecurityConstants.TOKEN_HEADER, token);
+        try (PrintWriter writer = response.getWriter()) {
+            //在响应报文中也添加登陆成功的消息
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("code", HttpServletResponse.SC_OK);
+            result.put("msg", "success");
+            result.put("roles", roles);
+            String json = JSON.toJSONString(result);
+            writer.write(json);
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException authenticationException) throws IOException {
+        response.setContentType("application/json;charset=utf-8");
+        response.setCharacterEncoding("utf-8");
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authenticationException.getMessage());
+        try (PrintWriter writer = response.getWriter()) {
+            //在响应报文中添加登陆失败的消息
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("code", HttpServletResponse.SC_UNAUTHORIZED);
+            result.put("msg", "fail:" + authenticationException.getMessage());
+            String json = JSON.toJSONString(result);
+            writer.write(json);
+        }
     }
 }

@@ -36,6 +36,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userMapper.selectByUsername(username);
+        if(user == null){
+            throw new UsernameNotFoundException("username not found");
+        }
         List<Role> roles = roleMapper.selectAllByUserId(user.getId());
         // 如果checkCode为空说明经过了邮箱验证
         boolean enable = user.getCheckCode() == null;

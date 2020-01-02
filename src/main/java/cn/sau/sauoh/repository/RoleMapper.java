@@ -22,4 +22,11 @@ public interface RoleMapper extends BaseMapper<Role> {
      * @return 保存用户所有身份的 List
      */
     List<Role> selectAllByUserId(Integer userId);
+
+    /**
+     * 查询指定value对应的id值
+     * @param value value
+     * @return value对应的id值
+     */
+    Integer selectRoleIdByValue(String value);
 }

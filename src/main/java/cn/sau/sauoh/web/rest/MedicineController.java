@@ -14,9 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 
 /**
- * @author nullptr
- * @email justitacsl@outlook.com
- * @date 2019-12-25 19:33:28
+ * 药品 API
  */
 @RestController
 @RequestMapping("/api/medicine")
