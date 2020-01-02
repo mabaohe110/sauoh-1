@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 
 /**
- * 针对返回数的操作类，用于设置http响应码、在响应报文中添加错误信息（有错误时）
+ * 针对返回数的操作类，用于设置http响应码
  */
 public class R extends HashMap<String, Object> {
 	/*

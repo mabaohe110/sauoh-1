@@ -35,6 +35,10 @@ public class RRException extends RuntimeException {
         return new RRException(msg, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
+    public static RRException serverError(){
+        return new RRException("服务器错误，请联系管理员", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    }
+
     public RRException(String msg, int code) {
         super(msg);
         this.msg = msg;

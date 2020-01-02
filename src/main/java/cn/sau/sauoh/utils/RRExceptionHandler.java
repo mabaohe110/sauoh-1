@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 
 /**
- * 异常处理器
+ * 异常处理器 、在响应报文中添加错误信息
  */
 @Component
 public class RRExceptionHandler implements HandlerExceptionResolver {
