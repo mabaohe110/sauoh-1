@@ -57,7 +57,7 @@ public class AuthService {
      * @param filedName 字段名
      * @param filed     字段值
      * @return 字段处于何种状态的描述，包括：noExist不存在、registered已注册（有数据且check_code为空）、
-     * registering 注册中（有数据、check_code不为空且create_time离当前时间不超过半个小时）
+     * registering 注册中（有数据、check_code不为空且create_time离当前时间不超过一天）
      */
     @Transactional(rollbackFor = SQLException.class)
     public String fieldStatus(String filedName, String filed) {
@@ -73,7 +73,7 @@ public class AuthService {
         Instant createTime = user.getCreateTime().toInstant();
         Duration duration = Duration.between(createTime, Instant.now());
         //注册流程已过，将这条记录删除
-        if (duration.toMinutes() > 30) {
+        if (duration.toHours() > 24) {
             userMapper.deleteById(user);
             return NO_EXIST;
         }
@@ -137,7 +137,7 @@ public class AuthService {
         }
         User user = userMapper.selectByCheckCode(checkCode);
         Duration duration = Duration.between(user.getCreateTime().toInstant(), Instant.now());
-        if (duration.toMinutes() > 30L) {
+        if (duration.toHours() > 24) {
             //存在但超时
             return false;
         }

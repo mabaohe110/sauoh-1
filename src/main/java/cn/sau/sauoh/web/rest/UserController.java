@@ -63,6 +63,18 @@ public class UserController {
     }
 
     /**
+     * 批量保存
+     */
+    @PostMapping("/batchsave")
+    public R save(@RequestBody String reqBody, HttpServletResponse response){
+        List<UserVM> vmList = JSONObject.parseArray(reqBody, UserVM.class);
+        if(userService.saveBatch(vmList)){
+            return R.created(response).put("insertSize", vmList.size());
+        }
+        throw RRException.serverError();
+    }
+
+    /**
      * 修改
      */
     @PutMapping("/update")

@@ -53,6 +53,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         this.doctorMapper = doctorMapper;
     }
 
+
     @Override
     public UserVM getById(Integer id) {
         User user = userMapper.selectById(id);
@@ -89,6 +90,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             userRoleMapper.insert(UserRole.builder().userId(user.getId()).roleId(roleId).build());
         });
         return vm;
+    }
+
+    /**
+     * 为了方便序列化为List，这个函数参数一般情况下是没有经过表单验证的，
+     * 除了邮箱格式错误以外，其他值如果为null会因为数据库的完整性约束报错，进而rollback
+     */
+    @Override
+    @Transactional(rollbackFor = {SQLException.class, RRException.class})
+    public boolean saveBatch(List<UserVM> vmList) {
+        //邮箱地址的正则表达式
+        String pattern = "[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[\\w](?:[\\w-]*[\\w])?";
+        vmList.forEach(vm -> {
+            if (vm.getEmail() == null) {
+                throw RRException.badRequest("请输入邮箱地址");
+            }
+            if (!vm.getEmail().matches(pattern)) {
+                throw RRException.badRequest("邮箱地址错误");
+            }
+            save(vm);
+        });
+        return true;
     }
 
     @Override

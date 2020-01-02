@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
@@ -69,19 +70,18 @@ public class PatientServiceImpl extends ServiceImpl<PatientMapper, Patient> impl
     }
 
     @Override
-    @Transactional(rollbackFor = {DuplicateKeyException.class, RRException.class})
+    @Transactional(rollbackFor = {SQLException.class, RRException.class})
     public boolean save(Patient patient) {
         Integer userId = patient.getUserId();
+        if (userId == null) {
+            throw RRException.badRequest("userId不能为null");
+        }
         patientMapper.insert(patient);
-        //在 user_role 表中插入身份
-        UserRole userRole = UserRole.builder().userId(userId).roleId(Constant.ROLE_CODE_PATIENT).build();
-        userRoleMapper.insert(userRole);
-        //此时的 patient 已经回填了id
         return true;
     }
 
     @Override
-    @Transactional(rollbackFor = {DuplicateKeyException.class, RRException.class})
+    @Transactional(rollbackFor = {SQLException.class, RRException.class})
     public boolean save(PatientVM vm) {
         //先 user表
         User user = vm.getUser();
@@ -93,10 +93,8 @@ public class PatientServiceImpl extends ServiceImpl<PatientMapper, Patient> impl
         patient.setUserId(user.getId());
         patientMapper.insert(patient);
         vm.setPatientId(patient.getId());
-
         //最后user_role 表
-        UserRole userRole = UserRole.builder().userId(user.getId()).roleId(Constant.ROLE_CODE_PATIENT).build();
-        userRoleMapper.insert(userRole);
+        userRoleMapper.insert(UserRole.builder().userId(user.getId()).roleId(Constant.ROLE_CODE_PATIENT).build());
         return true;
     }
 
@@ -104,7 +102,7 @@ public class PatientServiceImpl extends ServiceImpl<PatientMapper, Patient> impl
     @Transactional(rollbackFor = {DuplicateKeyException.class, RRException.class})
     public boolean updateById(Patient patient) {
         if (patient.getId() == null) {
-            throw RRException.badRequest("修改资源时必须指明id字段");
+            throw RRException.badRequest("修改时必须指明id");
         }
         Patient saved = patientMapper.selectById(patient.getId());
         if (saved == null) {
@@ -124,10 +122,12 @@ public class PatientServiceImpl extends ServiceImpl<PatientMapper, Patient> impl
         if (patient == null) {
             throw RRException.notFound("patientId not exist");
         }
-        //删除药品订单和问诊记录
+        //问诊记录表中的 patientId 全部设置为 null
         List<MedicalRecord> records = medicalRecordMapper.selectAllRecordsByPatientId(patient.getId());
-        records.forEach(record -> medicineOrderMapper.deleteAllByRecordId(record.getId()));
-        medicalRecordMapper.deleteAllByPatientId(patient.getId());
+        records.forEach(record -> {
+            record.setPatientId(null);
+            medicalRecordMapper.update(record, null);
+        });
         //删除身份
         userRoleMapper.deleteAllByUserId(patient.getUserId());
         patientMapper.deleteById(id);

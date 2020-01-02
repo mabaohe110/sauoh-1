@@ -115,13 +115,15 @@ public class DoctorServiceImpl extends ServiceImpl<DoctorMapper, Doctor> impleme
         if (doctor == null) {
             throw RRException.notFound("doctorId not exist");
         }
-        //删除药品订单和问诊记录
-        List<MedicalRecord> records = medicalRecordMapper.selectAllRecordsByDoctorId(doctor.getId());
-        records.forEach(record -> medicineOrderMapper.deleteAllByRecordId(record.getId()));
+        //问诊记录表中的 doctorId 全部设置为 null
+        List<MedicalRecord> records = medicalRecordMapper.selectAllRecordsByPatientId(doctor.getId());
+        records.forEach(record -> {
+            record.setPatientId(null);
+            medicalRecordMapper.update(record, null);
+        });
         medicalRecordMapper.deleteAllByDoctorId(doctor.getId());
-        //删除身份
+        //删除身份和doctor表
         userRoleMapper.deleteAllByUserId(doctor.getUserId());
-        //删除doctor表
         doctorMapper.deleteById(id);
         //删除user表
         userMapper.deleteById(doctor.getUserId());

@@ -1,8 +1,6 @@
 package cn.sau.sauoh.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -26,10 +24,12 @@ public class MedicalRecord implements Serializable {
 	/**
 	 * 
 	 */
+	@TableField(fill = FieldFill.UPDATE)
 	private Integer patientId;
 	/**
 	 * 
 	 */
+	@TableField(fill = FieldFill.UPDATE)
 	private Integer doctorId;
 	/**
 	 * 
