@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -34,7 +36,7 @@ public class PatientController {
                   @RequestParam(value = "sortOf", defaultValue = "ASC") String sortOf) {
         if ((!Constant.SORTOF_ASC.equalsIgnoreCase(sortOf))) {
             if ((!Constant.SORTOF_DESC.equalsIgnoreCase(sortOf))) {
-                throw new RRException("sortOf allow ASC or DESC", HttpServletResponse.SC_BAD_REQUEST);
+                throw RRException.badRequest("sortOf allow ASC or DESC");
             }
         }
         Page<Patient> page = new Page<>(pageNum, pageSize);
@@ -54,7 +56,10 @@ public class PatientController {
     @GetMapping("/info/{id}")
     public R info(@PathVariable("id") Integer id) {
         Patient patient = patientService.getById(id);
-        return R.ok().put("patient", patient);
+        if (patient != null) {
+            return R.ok().put("patient", patient);
+        }
+        throw RRException.notFound("id不存在");
     }
 
     /**
@@ -62,14 +67,59 @@ public class PatientController {
      */
     @PostMapping("/save")
     public R save(@Valid @RequestBody Patient patient, HttpServletResponse response) {
-        patientService.save(patient);
-        return R.created(response).put("patient", patient);
+        if (patient.getId() != null) {
+            throw RRException.badRequest("插入时不能指明Id");
+        }
+        if (patientService.save(patient)) {
+            return R.created(response).put("patient", patient);
+        }
+        throw RRException.serverError();
     }
 
+    /**
+     * 批量保存
+     */
+    @PostMapping("/batch/save")
+    public R saveBatch(@Valid @RequestBody List<Patient> patientList, HttpServletResponse response) {
+        patientList.forEach(patient -> {
+            if (patient.getId() != null) {
+                throw RRException.badRequest("插入时不能指明Id");
+            }
+        });
+        if (patientService.saveBatch(patientList)) {
+            return R.noContent(response);
+        }
+        throw RRException.serverError();
+    }
+
+    /**
+     * 直接保存
+     */
     @PostMapping("/savevm")
-    public R savevm(@Valid @RequestBody PatientVM vm, HttpServletResponse response) {
-        patientService.save(vm);
-        return R.created(response).put("patientvm", vm);
+    public R saveVm(@Valid @RequestBody PatientVM vm, HttpServletResponse response) {
+        if (vm.getUserId() != null || vm.getPatientId() != null) {
+            throw RRException.badRequest("插入时不能指明Id");
+        }
+        if (patientService.saveVm(vm)) {
+            return R.created(response).put("patientvm", vm);
+        }
+        throw RRException.serverError();
+    }
+
+    /**
+     * 批量直接保存
+     */
+    @PostMapping("/batch/savevm")
+    public R saveVmBatch(@Valid @RequestBody List<PatientVM> vmList, HttpServletResponse response) {
+        vmList.forEach(vm -> {
+            if (vm.getUserId() != null || vm.getPatientId() != null) {
+                throw RRException.badRequest("插入时不能指明Id");
+            }
+        });
+        if (patientService.saveVmBatch(vmList)) {
+            return R.created(response).put("patientvm", vmList);
+        }
+        throw RRException.serverError();
     }
 
     /**
@@ -77,8 +127,29 @@ public class PatientController {
      */
     @PutMapping("/update")
     public R update(@Valid @RequestBody Patient patient, HttpServletResponse response) {
-        patientService.updateById(patient);
-        return R.noContent(response);
+        if (patient.getId() == null) {
+            throw RRException.badRequest("修改时必须指明Id");
+        }
+        if (patientService.updateById(patient)) {
+            return R.noContent(response);
+        }
+        throw RRException.serverError();
+    }
+
+    /**
+     * 批量修改
+     */
+    @PutMapping("/batch/update")
+    public R updateBatch(@Valid @RequestBody List<Patient> patientList, HttpServletResponse response) {
+        patientList.forEach(patient -> {
+            if (patient.getId() == null) {
+                throw RRException.badRequest("修改时必须指明Id");
+            }
+        });
+        if (patientService.updateBatchById(patientList)) {
+            return R.noContent(response);
+        }
+        throw RRException.serverError();
     }
 
     /**
@@ -86,7 +157,20 @@ public class PatientController {
      */
     @DeleteMapping("/delete/{id}")
     public R delete(@PathVariable Integer id, HttpServletResponse response) {
-        patientService.removeById(id);
-        return R.noContent(response);
+        if (patientService.removeById(id)) {
+            return R.noContent(response);
+        }
+        throw RRException.serverError();
+    }
+
+    /**
+     * 批量删除
+     */
+    @PostMapping("/batch/delete")
+    public R deleteBatch(@RequestBody Integer[] ids, HttpServletResponse response) {
+        if (patientService.removeByIds(Arrays.asList(ids))) {
+            return R.noContent(response);
+        }
+        throw RRException.serverError();
     }
 }

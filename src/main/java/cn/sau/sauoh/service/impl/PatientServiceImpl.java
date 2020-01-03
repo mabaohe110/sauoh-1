@@ -4,27 +4,25 @@ import cn.sau.sauoh.entity.MedicalRecord;
 import cn.sau.sauoh.entity.Patient;
 import cn.sau.sauoh.entity.User;
 import cn.sau.sauoh.entity.UserRole;
-import cn.sau.sauoh.repository.*;
+import cn.sau.sauoh.repository.MedicalRecordMapper;
+import cn.sau.sauoh.repository.PatientMapper;
+import cn.sau.sauoh.repository.UserMapper;
+import cn.sau.sauoh.repository.UserRoleMapper;
 import cn.sau.sauoh.service.PatientService;
 import cn.sau.sauoh.utils.Constant;
 import cn.sau.sauoh.utils.RRException;
 import cn.sau.sauoh.web.vm.PatientVM;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
 
-/**
- * @author nullptr
- */
 @Service("patientService")
 public class PatientServiceImpl extends ServiceImpl<PatientMapper, Patient> implements PatientService {
 
@@ -33,7 +31,6 @@ public class PatientServiceImpl extends ServiceImpl<PatientMapper, Patient> impl
     private UserRoleMapper userRoleMapper;
 
     private MedicalRecordMapper medicalRecordMapper;
-    private MedicineOrderMapper medicineOrderMapper;
 
     @Autowired
     public void setUserMapper(UserMapper userMapper) {
@@ -55,34 +52,9 @@ public class PatientServiceImpl extends ServiceImpl<PatientMapper, Patient> impl
         this.medicalRecordMapper = medicalRecordMapper;
     }
 
-    @Autowired
-    public void setMedicineOrderMapper(MedicineOrderMapper medicineOrderMapper) {
-        this.medicineOrderMapper = medicineOrderMapper;
-    }
-
-    @Override
-    public Patient getById(Serializable id) {
-        Patient patient = patientMapper.selectById(id);
-        if (patient == null) {
-            throw new RRException("patientId不存在", HttpServletResponse.SC_NOT_FOUND);
-        }
-        return patient;
-    }
-
     @Override
     @Transactional(rollbackFor = {SQLException.class, RRException.class})
-    public boolean save(Patient patient) {
-        Integer userId = patient.getUserId();
-        if (userId == null) {
-            throw RRException.badRequest("userId不能为null");
-        }
-        patientMapper.insert(patient);
-        return true;
-    }
-
-    @Override
-    @Transactional(rollbackFor = {SQLException.class, RRException.class})
-    public boolean save(PatientVM vm) {
+    public boolean saveVm(PatientVM vm) {
         //先 user表
         User user = vm.getUser();
         //insert 之后主键回填
@@ -99,28 +71,41 @@ public class PatientServiceImpl extends ServiceImpl<PatientMapper, Patient> impl
     }
 
     @Override
-    @Transactional(rollbackFor = {DuplicateKeyException.class, RRException.class})
+    public boolean saveVmBatch(List<PatientVM> vmList) {
+        vmList.forEach(this::saveVm);
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = {SQLException.class, RRException.class})
     public boolean updateById(Patient patient) {
         if (patient.getId() == null) {
-            throw RRException.badRequest("修改时必须指明id");
+            throw RRException.badRequest("id不能为空");
         }
         Patient saved = patientMapper.selectById(patient.getId());
         if (saved == null) {
-            throw RRException.notFound("patientId 不存在");
+            throw RRException.notFound("id不存在");
         }
         if (!saved.getUserId().equals(patient.getUserId())) {
-            throw RRException.forbinden("不能修改patient的userId字段");
+            throw RRException.forbinden("userId字段不能修改");
         }
         patientMapper.updateById(patient);
         return true;
     }
 
     @Override
-    @Transactional(rollbackFor = RRException.class)
+    @Transactional(rollbackFor = {SQLException.class, RRException.class})
+    public boolean updateBatchById(Collection<Patient> patientList) {
+        patientList.forEach(this::updateById);
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = {SQLException.class, RRException.class})
     public boolean removeById(Serializable id) {
         Patient patient = patientMapper.selectById(id);
         if (patient == null) {
-            throw RRException.notFound("patientId not exist");
+            throw RRException.notFound("id不存在");
         }
         //问诊记录表中的 patientId 全部设置为 null
         List<MedicalRecord> records = medicalRecordMapper.selectAllRecordsByPatientId(patient.getId());
@@ -138,7 +123,7 @@ public class PatientServiceImpl extends ServiceImpl<PatientMapper, Patient> impl
     }
 
     @Override
-    @Transactional(rollbackFor = RRException.class)
+    @Transactional(rollbackFor = {SQLException.class, RRException.class})
     public boolean removeByIds(Collection<? extends Serializable> idList) {
         idList.forEach(this::removeById);
         return true;

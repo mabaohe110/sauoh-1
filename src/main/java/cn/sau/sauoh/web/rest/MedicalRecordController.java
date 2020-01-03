@@ -2,7 +2,9 @@ package cn.sau.sauoh.web.rest;
 
 import cn.sau.sauoh.entity.MedicalRecord;
 import cn.sau.sauoh.service.MedicalRecordService;
+import cn.sau.sauoh.utils.Constant;
 import cn.sau.sauoh.utils.R;
+import cn.sau.sauoh.utils.RRException;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import java.util.Arrays;
 
 
 /**
+ * todo 20200104 完成
  * 问诊记录 api
  */
 @RestController
@@ -28,10 +31,15 @@ public class MedicalRecordController {
                   @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
                   @RequestParam(value = "sortBy", defaultValue = "id") String sortBy,
                   @RequestParam(value = "sortOf", defaultValue = "ASC") String sortOf) {
+        if ((!Constant.SORTOF_ASC.equalsIgnoreCase(sortOf))) {
+            if ((!Constant.SORTOF_DESC.equalsIgnoreCase(sortOf))) {
+                throw RRException.badRequest("sortOf allow ASC or DESC");
+            }
+        }
         Page<MedicalRecord> page = new Page<>(pageNum, pageSize);
-        if ("ASC".equals(sortOf)) {
+        if (Constant.SORTOF_ASC.equalsIgnoreCase(sortOf)) {
             page.addOrder(OrderItem.asc(sortBy));
-        } else {
+        } else if (Constant.SORTOF_DESC.equalsIgnoreCase(sortOf)) {
             page.addOrder(OrderItem.desc(sortBy));
         }
         medicalRecordService.page(page);

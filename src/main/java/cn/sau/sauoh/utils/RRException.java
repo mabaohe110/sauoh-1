@@ -19,6 +19,12 @@ public class RRException extends RuntimeException {
     private String msg;
     private int code;
 
+    public RRException(String msg, int code) {
+        super(msg);
+        this.msg = msg;
+        this.code = code;
+    }
+
     public static RRException badRequest(String msg) {
         return new RRException(msg, HttpServletResponse.SC_BAD_REQUEST);
     }
@@ -31,18 +37,12 @@ public class RRException extends RuntimeException {
         return new RRException(msg, HttpServletResponse.SC_NOT_FOUND);
     }
 
-    public static RRException serverError(String msg){
+    public static RRException serverError(String msg) {
         return new RRException(msg, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
-    public static RRException serverError(){
+    public static RRException serverError() {
         return new RRException("服务器错误，请联系管理员", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-    }
-
-    public RRException(String msg, int code) {
-        super(msg);
-        this.msg = msg;
-        this.code = code;
     }
 
     public String getMsg() {

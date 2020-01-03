@@ -1,12 +1,9 @@
 package cn.sau.sauoh.security.entity;
 
-import cn.sau.sauoh.entity.Role;
-import cn.sau.sauoh.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author nullptr
@@ -67,7 +64,7 @@ public class JwtUser implements UserDetails {
 
     @Override
     public String toString() {
-        return "JwtUser{"+
+        return "JwtUser{" +
                 "username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", authorities=" + authorities +

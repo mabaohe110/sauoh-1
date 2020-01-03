@@ -16,4 +16,7 @@ public class Constant {
     public static final Integer ROLE_CODE_CITY_ADMIN = 2;
     public static final Integer ROLE_CODE_DOCTOR = 3;
     public static final Integer ROLE_CODE_PATIENT = 4;
+
+    public static final Integer DOCTOR_CHECK_PASSED = 1;
+    public static final Integer DOCTOR_NON_CHECK = 0;
 }

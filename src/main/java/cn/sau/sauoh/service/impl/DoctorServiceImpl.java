@@ -4,22 +4,26 @@ import cn.sau.sauoh.entity.Doctor;
 import cn.sau.sauoh.entity.MedicalRecord;
 import cn.sau.sauoh.entity.User;
 import cn.sau.sauoh.entity.UserRole;
-import cn.sau.sauoh.repository.*;
+import cn.sau.sauoh.repository.DoctorMapper;
+import cn.sau.sauoh.repository.MedicalRecordMapper;
+import cn.sau.sauoh.repository.UserMapper;
+import cn.sau.sauoh.repository.UserRoleMapper;
 import cn.sau.sauoh.service.DoctorService;
 import cn.sau.sauoh.utils.Constant;
 import cn.sau.sauoh.utils.RRException;
 import cn.sau.sauoh.web.vm.DoctorVM;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
+import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 
-
+@Slf4j
 @Service("doctorService")
 public class DoctorServiceImpl extends ServiceImpl<DoctorMapper, Doctor> implements DoctorService {
 
@@ -29,7 +33,6 @@ public class DoctorServiceImpl extends ServiceImpl<DoctorMapper, Doctor> impleme
     private UserRoleMapper userRoleMapper;
 
     private MedicalRecordMapper medicalRecordMapper;
-    private MedicineOrderMapper medicineOrderMapper;
 
     @Autowired
     public void setDoctorMapper(DoctorMapper doctorMapper) {
@@ -46,29 +49,20 @@ public class DoctorServiceImpl extends ServiceImpl<DoctorMapper, Doctor> impleme
         this.userRoleMapper = userRoleMapper;
     }
 
-    @Override
-    public Doctor getById(Serializable id) {
-        Doctor doctor = doctorMapper.selectById(id);
-        if (doctor == null) {
-            throw new RRException("doctorId不存在", HttpServletResponse.SC_NOT_FOUND);
-        }
-        return doctor;
-    }
-
     @Autowired
     public void setMedicalRecordMapper(MedicalRecordMapper medicalRecordMapper) {
         this.medicalRecordMapper = medicalRecordMapper;
     }
 
-    @Autowired
-    public void setMedicineOrderMapper(MedicineOrderMapper medicineOrderMapper) {
-        this.medicineOrderMapper = medicineOrderMapper;
-    }
 
+    /**
+     * 与 Patient 不同，新建医生用户时并不默认具有 Doctoer 权限，所以 save doctor 时也要添加user_role中的记录
+     */
     @Override
-    @Transactional(rollbackFor = {DuplicateKeyException.class, RRException.class})
+    @Transactional(rollbackFor = {SQLException.class, RRException.class})
     public boolean save(Doctor doctor) {
         Integer userId = doctor.getUserId();
+        doctor.setChecked(Constant.DOCTOR_NON_CHECK);
         doctorMapper.insert(doctor);
         UserRole userRole = UserRole.builder().userId(userId).roleId(Constant.ROLE_CODE_DOCTOR).build();
         userRoleMapper.insert(userRole);
@@ -76,9 +70,9 @@ public class DoctorServiceImpl extends ServiceImpl<DoctorMapper, Doctor> impleme
     }
 
     @Override
-    @Transactional(rollbackFor = {DuplicateKeyException.class, RRException.class})
-    public boolean save(DoctorVM vm) {
-        //先 user 表
+    @Transactional(rollbackFor = {SQLException.class, RRException.class})
+    public boolean saveVm(DoctorVM vm) {
+        //先 user表
         User user = vm.getUser();
         //insert之后回填主键
         userMapper.insert(user);
@@ -95,39 +89,58 @@ public class DoctorServiceImpl extends ServiceImpl<DoctorMapper, Doctor> impleme
     }
 
     @Override
-    @Transactional(rollbackFor = {DuplicateKeyException.class, RRException.class})
+    public boolean saveVmBatch(List<DoctorVM> vmList) {
+        vmList.forEach(this::saveVm);
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = {SQLException.class, RRException.class})
     public boolean updateById(Doctor doctor) {
         Doctor saved = doctorMapper.selectById(doctor.getId());
         if (saved == null) {
-            throw RRException.notFound("doctorId 不存在");
+            throw RRException.notFound("id不存在");
         }
         if (!saved.getUserId().equals(doctor.getUserId())) {
-            throw RRException.forbinden("不能修改doctor的userId字段");
+            throw RRException.forbinden("userId字段不能修改");
         }
         doctorMapper.updateById(doctor);
         return true;
     }
 
     @Override
-    @Transactional(rollbackFor = RRException.class)
+    @Transactional(rollbackFor = {SQLException.class, RRException.class})
+    public boolean updateBatchById(Collection<Doctor> doctorList) {
+        doctorList.forEach(this::updateById);
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = {SQLException.class, RRException.class})
     public boolean removeById(Serializable id) {
         Doctor doctor = doctorMapper.selectById(id);
-        if (doctor == null) {
-            throw RRException.notFound("doctorId not exist");
+        if (doctor.getId() == null) {
+            throw RRException.notFound("Id不存在");
         }
-        //问诊记录表中的 doctorId 全部设置为 null
-        List<MedicalRecord> records = medicalRecordMapper.selectAllRecordsByPatientId(doctor.getId());
+        //问诊记录表中的 patientId 全部设置为 null
+        List<MedicalRecord> records = medicalRecordMapper.selectAllRecordsByDoctorId(doctor.getId());
         records.forEach(record -> {
-            record.setPatientId(null);
+            record.setDoctorId(null);
             medicalRecordMapper.update(record, null);
         });
-        medicalRecordMapper.deleteAllByDoctorId(doctor.getId());
-        //删除身份和doctor表
+        //删除身份
         userRoleMapper.deleteAllByUserId(doctor.getUserId());
         doctorMapper.deleteById(id);
         //删除user表
         userMapper.deleteById(doctor.getUserId());
-        log.warn("delete doctor:" + doctor.toString());
+        log.warn("delete patient:" + doctor.toString());
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = {SQLException.class, RRException.class})
+    public boolean removeByIds(Collection<? extends Serializable> idList) {
+        idList.forEach(this::removeById);
         return true;
     }
 }

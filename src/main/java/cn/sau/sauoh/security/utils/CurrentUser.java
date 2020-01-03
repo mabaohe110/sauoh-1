@@ -1,7 +1,7 @@
 package cn.sau.sauoh.security.utils;
 
-import cn.sau.sauoh.security.service.UserDetailsServiceImpl;
 import cn.sau.sauoh.security.entity.JwtUser;
+import cn.sau.sauoh.security.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,15 +21,15 @@ public class CurrentUser {
         this.userDetailsService = userDetailsService;
     }
 
-    public JwtUser getCurrentUser() {
-        return (JwtUser) userDetailsService.loadUserByUsername(getCurrentUserName());
-    }
-
     private static String getCurrentUserName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() != null) {
             return (String) authentication.getPrincipal();
         }
         return null;
+    }
+
+    public JwtUser getCurrentUser() {
+        return (JwtUser) userDetailsService.loadUserByUsername(getCurrentUserName());
     }
 }

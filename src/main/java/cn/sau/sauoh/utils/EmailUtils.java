@@ -19,8 +19,17 @@ import javax.mail.internet.MimeMessage;
 @Slf4j
 public class EmailUtils {
 
+    public static final String EMAIL_PATTERN = "[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[\\w](?:[\\w-]*[\\w])?";
+
     private JavaMailSender mailSender;
     private SpringTemplateEngine thymeleaf;
+
+    /**
+     * 检查邮箱地址是否符合格式
+     */
+    public static boolean checkAddress(String address) {
+        return address.matches(EMAIL_PATTERN);
+    }
 
     @Autowired
     public void setMailSender(JavaMailSender mailSender) {

@@ -3,7 +3,7 @@
 
 <mapper namespace="cn.sau.sauoh.repository.DoctorMapper">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="cn.sau.sauoh.entity.Doctor" id="doctorMap">
         <result property="id" column="id"/>
         <result property="userId" column="user_id"/>

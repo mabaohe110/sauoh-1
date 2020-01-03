@@ -15,12 +15,13 @@ public interface UserService extends IService<User> {
 
     UserVM getById(Integer id);
 
-    UserVM save(UserVM vm);
+    boolean saveVm(UserVM vm);
 
-    boolean saveBatch(List<UserVM> vmList);
+    boolean saveVmBatch(List<UserVM> vmList);
 
     boolean updateById(UserVM vm);
 
     boolean updateBatchById(List<UserVM> vmList);
+
 }
 

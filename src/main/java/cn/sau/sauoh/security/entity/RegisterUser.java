@@ -40,7 +40,7 @@ public class RegisterUser implements UserDetails {
     }
 
     /**
-     *  返回用户的所有身份
+     * 返回用户的所有身份
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -48,7 +48,7 @@ public class RegisterUser implements UserDetails {
     }
 
     /**
-     *  账户是否失效
+     * 账户是否失效
      */
     @Override
     public boolean isAccountNonExpired() {
@@ -56,7 +56,7 @@ public class RegisterUser implements UserDetails {
     }
 
     /**
-     *  账户是否被锁定
+     * 账户是否被锁定
      */
     @Override
     public boolean isAccountNonLocked() {
@@ -64,7 +64,7 @@ public class RegisterUser implements UserDetails {
     }
 
     /**
-     *  认证资格是否过期
+     * 认证资格是否过期
      */
     @Override
     public boolean isCredentialsNonExpired() {

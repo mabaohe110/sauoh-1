@@ -2,10 +2,10 @@ package cn.sau.sauoh.web.rest;
 
 import cn.sau.sauoh.entity.User;
 import cn.sau.sauoh.service.UserService;
+import cn.sau.sauoh.utils.Constant;
 import cn.sau.sauoh.utils.R;
 import cn.sau.sauoh.utils.RRException;
 import cn.sau.sauoh.web.vm.UserVM;
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +33,15 @@ public class UserController {
                   @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
                   @RequestParam(value = "sortBy", defaultValue = "id") String sortBy,
                   @RequestParam(value = "sortOf", defaultValue = "ASC") String sortOf) {
+        if ((!Constant.SORTOF_ASC.equalsIgnoreCase(sortOf))) {
+            if ((!Constant.SORTOF_DESC.equalsIgnoreCase(sortOf))) {
+                throw RRException.badRequest("sortOf allow ASC or DESC");
+            }
+        }
         Page<User> page = new Page<>(pageNum, pageSize);
-        if ("ASC".equals(sortOf)) {
+        if (Constant.SORTOF_ASC.equalsIgnoreCase(sortOf)) {
             page.addOrder(OrderItem.asc(sortBy));
-        } else {
+        } else if (Constant.SORTOF_DESC.equalsIgnoreCase(sortOf)) {
             page.addOrder(OrderItem.desc(sortBy));
         }
         userService.page(page);
@@ -50,6 +55,9 @@ public class UserController {
     @GetMapping("/info/{id}")
     public R info(@PathVariable("id") Integer id) {
         UserVM vm = userService.getById(id);
+        if (vm == null) {
+            throw RRException.notFound("指定Id不存在");
+        }
         return R.ok().put("uservm", vm);
     }
 
@@ -58,18 +66,27 @@ public class UserController {
      */
     @PostMapping("/save")
     public R save(@Valid @RequestBody UserVM vm, HttpServletResponse response) {
-        userService.save(vm);
-        return R.created(response).put("uservm", vm);
+        if (vm.getId() != null) {
+            throw RRException.badRequest("插入时不能指明Id");
+        }
+        if (userService.saveVm(vm)) {
+            return R.created(response).put("uservm", vm);
+        }
+        throw RRException.serverError();
     }
 
     /**
      * 批量保存
      */
-    @PostMapping("/batchsave")
-    public R save(@RequestBody String reqBody, HttpServletResponse response){
-        List<UserVM> vmList = JSONObject.parseArray(reqBody, UserVM.class);
-        if(userService.saveBatch(vmList)){
-            return R.created(response).put("insertSize", vmList.size());
+    @PostMapping("/batch/save")
+    public R save(@RequestBody List<UserVM> vmList, HttpServletResponse response) {
+        vmList.forEach(vm -> {
+            if (vm.getId() != null) {
+                throw RRException.badRequest("插入时不能指明Id");
+            }
+        });
+        if (userService.saveVmBatch(vmList)) {
+            return R.noContent(response);
         }
         throw RRException.serverError();
     }
@@ -79,6 +96,9 @@ public class UserController {
      */
     @PutMapping("/update")
     public R update(@Valid @RequestBody UserVM vm, HttpServletResponse response) {
+        if (vm.getId() == null) {
+            throw RRException.badRequest("修改时必须指明Id");
+        }
         if (userService.updateById(vm)) {
             return R.noContent(response);
         }
@@ -88,9 +108,13 @@ public class UserController {
     /**
      * 批量修改
      */
-    @PutMapping("/batchupdate")
-    public R update(@RequestBody String reqBody, HttpServletResponse response) {
-        List<UserVM> vmList = JSONObject.parseArray(reqBody, UserVM.class);
+    @PutMapping("/batch/update")
+    public R updateBatch(@RequestBody List<UserVM> vmList, HttpServletResponse response) {
+        vmList.forEach(vm -> {
+            if (vm.getId() == null) {
+                throw RRException.badRequest("修改时必须指明Id");
+            }
+        });
         if (userService.updateBatchById(vmList)) {
             return R.noContent(response);
         }
@@ -102,16 +126,20 @@ public class UserController {
      */
     @DeleteMapping("/delete/{id}")
     public R delete(@PathVariable Integer id, HttpServletResponse response) {
-        userService.removeById(id);
-        return R.noContent(response);
+        if (userService.removeById(id)) {
+            return R.noContent(response);
+        }
+        throw RRException.serverError();
     }
 
     /**
      * 批量删除
      */
-    @PostMapping("/batchdelete")
+    @PostMapping("/batch/delete")
     public R delete(@RequestBody Integer[] ids, HttpServletResponse response) {
-        userService.removeByIds(Arrays.asList(ids));
-        return R.noContent(response);
+        if (userService.removeByIds(Arrays.asList(ids))) {
+            return R.noContent(response);
+        }
+        throw RRException.serverError();
     }
 }

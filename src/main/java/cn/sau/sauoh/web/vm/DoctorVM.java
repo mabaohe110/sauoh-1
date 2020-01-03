@@ -2,8 +2,6 @@ package cn.sau.sauoh.web.vm;
 
 import cn.sau.sauoh.entity.Doctor;
 import cn.sau.sauoh.entity.User;
-import cn.sau.sauoh.utils.DateUtils;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
@@ -49,6 +47,8 @@ public class DoctorVM {
     @NotNull
     private String hospital;
 
+    private Integer checked;
+
     @JsonIgnore
     public User getUser() {
         return User.builder().id(userId).username(username).password(password).email(email).build();
@@ -58,6 +58,6 @@ public class DoctorVM {
     public Doctor getDoctor() {
         return Doctor.builder().id(doctorId).userId(userId).name(name)
                 .sex(sex).phone(phone).workedTime(workedTime).level(level)
-                .hospital(hospital).departmentId(departmentId).build();
+                .hospital(hospital).departmentId(departmentId).checked(checked).build();
     }
 }

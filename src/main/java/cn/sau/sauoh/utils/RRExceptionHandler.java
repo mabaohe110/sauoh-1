@@ -3,9 +3,8 @@ package cn.sau.sauoh.utils;
 import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
@@ -13,6 +12,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * 异常处理器 、在响应报文中添加错误信息
@@ -25,8 +26,7 @@ public class RRExceptionHandler implements HandlerExceptionResolver {
     public ModelAndView resolveException(HttpServletRequest request,
                                          HttpServletResponse response, Object handler, Exception ex) {
 
-        try (PrintWriter writer = response.getWriter())
-        {
+        try (PrintWriter writer = response.getWriter()) {
             response.setContentType("application/json;charset=utf-8");
             response.setCharacterEncoding("utf-8");
 
@@ -36,18 +36,15 @@ public class RRExceptionHandler implements HandlerExceptionResolver {
             if (ex instanceof RRException) {
                 eCode = ((RRException) ex).getCode();
                 eMsg = ((RRException) ex).getMsg();
-            }//数据完整性校验不通过
-            else if (ex instanceof DataIntegrityViolationException) {
+            }//SQL
+            else if (ex instanceof SQLException) {
                 eCode = 400;
                 eMsg = ex.getMessage();
-            }// SQL 语句参数错误
-            else if (ex instanceof BadSqlGrammarException) {
-                eCode = 400;
-                eMsg = ((BadSqlGrammarException) ex).getSQLException().getMessage();
             }//表单绑定错误
             else if (ex instanceof MethodArgumentNotValidException) {
                 eCode = 400;
-                eMsg = ((MethodArgumentNotValidException) ex).getMessage();
+                List<FieldError> errorList = ((MethodArgumentNotValidException) ex).getBindingResult().getFieldErrors();
+                eMsg = errorList.toString();
             }
 
             R r = new R();

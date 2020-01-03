@@ -20,17 +20,17 @@ public class MailConfig {
     private static final String DEFAULT_HOST = "localhost";
     private static final String DEFAULT_PORT = "8080";
 
-    @Bean
-    @Autowired
-    public MimeMessageHelper mimeMessageHelper(JavaMailSender sender) throws MessagingException {
-        return new MimeMessageHelper(sender.createMimeMessage(), true);
-    }
-
     public static String getSenderAddress() {
         return DEFAULT_SENDER_ADDRESS;
     }
 
     public static String getDefaultHostAndPort() {
         return DEFAULT_HOST + ':' + DEFAULT_PORT;
+    }
+
+    @Bean
+    @Autowired
+    public MimeMessageHelper mimeMessageHelper(JavaMailSender sender) throws MessagingException {
+        return new MimeMessageHelper(sender.createMimeMessage(), true);
     }
 }

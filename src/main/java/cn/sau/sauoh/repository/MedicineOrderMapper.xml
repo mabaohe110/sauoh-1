@@ -7,14 +7,20 @@
     <resultMap type="cn.sau.sauoh.entity.MedicineOrder" id="medicineOrderMap">
         <result property="id" column="id"/>
         <result property="medicalRecordId" column="medical_record_id"/>
-        <result property="medicineId" column="medicine_id"/>
+        <result property="medicineName" column="medicine_name"/>
         <result property="medicineNum" column="medicine_num"/>
     </resultMap>
 
-    <delete id="deleteAllByRecordId" parameterType="java.lang.Integer">
+    <select id="selectAllByMrId" parameterType="java.lang.Integer" resultMap="medicineOrderMap">
+        SELECT medical_record_id, medicine_name, medicine_num
+        FROM medicine_order
+        WHERE medical_record_id = #{mrId, javaType=INTEGER};
+    </select>
+
+    <delete id="deleteAllByMrId" parameterType="java.lang.Integer">
         DELETE
         FROM medicine_order
-        WHERE medical_record_id = #{recordId, javaType=INTEGER};
+        WHERE medical_record_id = #{mrId, javaType=INTEGER};
     </delete>
 
 </mapper>

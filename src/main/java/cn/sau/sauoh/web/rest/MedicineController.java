@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -32,20 +35,17 @@ public class MedicineController {
                   @RequestParam(value = "sortOf", defaultValue = "ASC") String sortOf) {
         if ((!Constant.SORTOF_ASC.equalsIgnoreCase(sortOf))) {
             if ((!Constant.SORTOF_DESC.equalsIgnoreCase(sortOf))) {
-                throw new RRException("sortOf allow ASC or DESC", HttpServletResponse.SC_BAD_REQUEST);
+                throw RRException.badRequest("sortOf allow ASC or DESC");
             }
         }
         Page<Medicine> page = new Page<>(pageNum, pageSize);
         if (Constant.SORTOF_ASC.equalsIgnoreCase(sortOf)) {
             page.addOrder(OrderItem.asc(sortBy));
-            medicineService.page(page);
-            return R.ok().put("page", page);
         } else if (Constant.SORTOF_DESC.equalsIgnoreCase(sortOf)) {
             page.addOrder(OrderItem.desc(sortBy));
-            medicineService.page(page);
-            return R.ok().put("page", page);
         }
-        throw new RRException("sortOf:alone allow ASC or DESC", HttpServletResponse.SC_BAD_REQUEST);
+        medicineService.page(page);
+        return R.ok().put("page", page);
     }
 
 
@@ -55,25 +55,71 @@ public class MedicineController {
     @GetMapping("/info/{id}")
     public R info(@PathVariable("id") Integer id) {
         Medicine medicine = medicineService.getById(id);
-        return R.ok().put("medicine", medicine);
+        if (medicine != null) {
+            return R.ok().put("medicine", medicine);
+        }
+        throw RRException.notFound("id不存在");
     }
 
     /**
      * 保存
      */
     @PostMapping("/save")
-    public R save(@RequestBody Medicine medicine, HttpServletResponse response) {
-        medicineService.save(medicine);
-        return R.created(response).put("medicine", medicine);
+    public R save(@Valid @RequestBody Medicine medicine, HttpServletResponse response) {
+        if (medicine.getId() != null) {
+            throw RRException.badRequest("插入时不能指明Id");
+        }
+        if (medicineService.save(medicine)) {
+            return R.created(response).put("medicine", medicine);
+        }
+        throw RRException.serverError();
     }
+
+    /**
+     * 批量保存
+     */
+    @PostMapping("/batch/save")
+    public R saveBatch(@Valid @RequestBody List<Medicine> medicineList, HttpServletResponse response) {
+        medicineList.forEach(medicine -> {
+            if (medicine.getId() != null) {
+                throw RRException.badRequest("插入时不能指明Id");
+            }
+        });
+        if (medicineService.saveBatch(medicineList)) {
+            return R.noContent(response);
+        }
+        throw RRException.serverError();
+    }
+
 
     /**
      * 修改
      */
     @PutMapping("/update")
-    public R update(@RequestBody Medicine medicine, HttpServletResponse response) {
-        medicineService.updateById(medicine);
-        return R.noContent(response);
+    public R update(@Valid @RequestBody Medicine medicine, HttpServletResponse response) {
+        if (medicine.getId() == null) {
+            throw RRException.badRequest("修改时必须指明Id");
+        }
+        if (medicineService.updateById(medicine)) {
+            return R.noContent(response);
+        }
+        throw RRException.serverError();
+    }
+
+    /**
+     * 批量修改
+     */
+    @PutMapping("/batch/update")
+    public R update(@Valid @RequestBody List<Medicine> medicineList, HttpServletResponse response) {
+        medicineList.forEach(medicine -> {
+            if (medicine.getId() == null) {
+                throw RRException.badRequest("修改时必须指明Id");
+            }
+        });
+        if (medicineService.updateBatchById(medicineList)) {
+            return R.noContent(response);
+        }
+        throw RRException.serverError();
     }
 
     /**
@@ -81,8 +127,20 @@ public class MedicineController {
      */
     @DeleteMapping("/delete/{id}")
     public R delete(@PathVariable Integer id, HttpServletResponse response) {
-        medicineService.removeById(id);
-        return R.noContent(response);
+        if (medicineService.removeById(id)) {
+            return R.noContent(response);
+        }
+        throw RRException.serverError();
     }
 
+    /**
+     * 批量删除
+     */
+    @PostMapping("/batch/delete")
+    public R delete(@RequestBody Integer[] ids, HttpServletResponse response) {
+        if (medicineService.removeByIds(Arrays.asList(ids))) {
+            return R.noContent(response);
+        }
+        throw RRException.serverError();
+    }
 }
