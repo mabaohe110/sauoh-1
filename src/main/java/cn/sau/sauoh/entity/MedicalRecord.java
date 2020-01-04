@@ -44,4 +44,5 @@ public class MedicalRecord implements Serializable {
      */
     private String doctorAdvice;
 
+    private Integer patientAppraise;
 }

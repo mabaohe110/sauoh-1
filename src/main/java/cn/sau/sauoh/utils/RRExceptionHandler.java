@@ -3,6 +3,7 @@ package cn.sau.sauoh.utils;
 import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -12,7 +13,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
-import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -37,7 +37,7 @@ public class RRExceptionHandler implements HandlerExceptionResolver {
                 eCode = ((RRException) ex).getCode();
                 eMsg = ((RRException) ex).getMsg();
             }//SQL
-            else if (ex instanceof SQLException) {
+            else if (ex instanceof DuplicateKeyException) {
                 eCode = 400;
                 eMsg = ex.getMessage();
             }//表单绑定错误

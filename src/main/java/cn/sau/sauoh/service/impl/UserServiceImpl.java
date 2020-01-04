@@ -6,6 +6,7 @@ import cn.sau.sauoh.repository.RoleMapper;
 import cn.sau.sauoh.repository.UserMapper;
 import cn.sau.sauoh.repository.UserRoleMapper;
 import cn.sau.sauoh.service.UserService;
+import cn.sau.sauoh.utils.Constant;
 import cn.sau.sauoh.utils.RRException;
 import cn.sau.sauoh.web.vm.UserVM;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -46,7 +47,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public UserVM getById(Integer id) {
         User user = userMapper.selectById(id);
         if (user == null) {
-            throw RRException.notFound("id不存在");
+            throw RRException.notFound(Constant.ERROR_MSG_ID_NOT_EXIST);
         }
         List<UserRole> userRoles = userRoleMapper.selectAllByUserId(id);
         List<String> roles = new ArrayList<>();
@@ -128,5 +129,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public boolean removeByIds(Collection<? extends Serializable> idList) {
         idList.forEach(this::removeById);
         return true;
+    }
+
+    @Override
+    public User getByUsername(String username) {
+        return userMapper.selectByUsername(username);
     }
 }

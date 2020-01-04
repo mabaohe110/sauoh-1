@@ -50,6 +50,9 @@ public class DepartmentController {
     @GetMapping("/info/{id}")
     public R info(@PathVariable("id") Integer id) {
         Department department = departmentService.getById(id);
+        if (department == null) {
+            throw RRException.notFound("指定Id不存在");
+        }
         return R.ok().put("department", department);
     }
 

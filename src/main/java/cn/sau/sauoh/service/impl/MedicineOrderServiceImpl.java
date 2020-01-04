@@ -3,6 +3,8 @@ package cn.sau.sauoh.service.impl;
 import cn.sau.sauoh.entity.MedicineOrder;
 import cn.sau.sauoh.repository.MedicineOrderMapper;
 import cn.sau.sauoh.service.MedicineOrderService;
+import cn.sau.sauoh.utils.Constant;
+import cn.sau.sauoh.utils.RRException;
 import cn.sau.sauoh.web.vm.MedicineOrderVM;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,10 @@ public class MedicineOrderServiceImpl extends ServiceImpl<MedicineOrderMapper, M
     @Override
     public MedicineOrderVM getByMedicalRecordId(Integer mrId) {
         List<MedicineOrder> medicineOrderList = medicineOrderMapper.selectAllByMrId(mrId);
-        return MedicineOrderVM.buildByMoList(medicineOrderList);
+        if (!medicineOrderList.isEmpty()) {
+            return MedicineOrderVM.buildByMoList(medicineOrderList);
+        }
+        throw RRException.notFound(Constant.ERROR_MSG_ID_NOT_EXIST);
     }
 
     @Override

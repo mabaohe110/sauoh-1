@@ -19,4 +19,9 @@ public class Constant {
 
     public static final Integer DOCTOR_CHECK_PASSED = 1;
     public static final Integer DOCTOR_NON_CHECK = 0;
+
+    public static final String ERROR_MSG_ID_NOT_EXIST = "Id不存在";
+    public static final String ERROR_MSG_ID_NOT_NEED = "当前操作不应指明Id";
+    public static final String ERROR_MSG_ID_NEED = "当前操作必须指明Id";
+
 }

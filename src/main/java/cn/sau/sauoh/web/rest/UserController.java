@@ -1,6 +1,7 @@
 package cn.sau.sauoh.web.rest;
 
 import cn.sau.sauoh.entity.User;
+import cn.sau.sauoh.security.utils.CurrentUser;
 import cn.sau.sauoh.service.UserService;
 import cn.sau.sauoh.utils.Constant;
 import cn.sau.sauoh.utils.R;
@@ -22,8 +23,19 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
-    @Autowired
+
+    private CurrentUser currentUser;
     private UserService userService;
+
+    @Autowired
+    public void setCurrentUser(CurrentUser currentUser) {
+        this.currentUser = currentUser;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 
     /**
      * 列表
@@ -48,6 +60,15 @@ public class UserController {
         return R.ok().put("page", page);
     }
 
+    /**
+     * 当前登陆用户
+     */
+    @GetMapping("/info/me")
+    public R infoMe() {
+        String username = currentUser.getCurrentUser().getUsername();
+        User user = userService.getByUsername(username);
+        return R.ok().put("user", user);
+    }
 
     /**
      * 信息
@@ -56,7 +77,7 @@ public class UserController {
     public R info(@PathVariable("id") Integer id) {
         UserVM vm = userService.getById(id);
         if (vm == null) {
-            throw RRException.notFound("指定Id不存在");
+            throw RRException.notFound(Constant.ERROR_MSG_ID_NOT_EXIST);
         }
         return R.ok().put("uservm", vm);
     }
@@ -67,7 +88,7 @@ public class UserController {
     @PostMapping("/save")
     public R save(@Valid @RequestBody UserVM vm, HttpServletResponse response) {
         if (vm.getId() != null) {
-            throw RRException.badRequest("插入时不能指明Id");
+            throw RRException.badRequest(Constant.ERROR_MSG_ID_NOT_NEED);
         }
         if (userService.saveVm(vm)) {
             return R.created(response).put("uservm", vm);
@@ -79,10 +100,10 @@ public class UserController {
      * 批量保存
      */
     @PostMapping("/batch/save")
-    public R save(@RequestBody List<UserVM> vmList, HttpServletResponse response) {
+    public R saveBatch(@RequestBody List<UserVM> vmList, HttpServletResponse response) {
         vmList.forEach(vm -> {
             if (vm.getId() != null) {
-                throw RRException.badRequest("插入时不能指明Id");
+                throw RRException.badRequest(Constant.ERROR_MSG_ID_NOT_NEED);
             }
         });
         if (userService.saveVmBatch(vmList)) {
@@ -97,7 +118,7 @@ public class UserController {
     @PutMapping("/update")
     public R update(@Valid @RequestBody UserVM vm, HttpServletResponse response) {
         if (vm.getId() == null) {
-            throw RRException.badRequest("修改时必须指明Id");
+            throw RRException.badRequest(Constant.ERROR_MSG_ID_NEED);
         }
         if (userService.updateById(vm)) {
             return R.noContent(response);
@@ -112,7 +133,7 @@ public class UserController {
     public R updateBatch(@RequestBody List<UserVM> vmList, HttpServletResponse response) {
         vmList.forEach(vm -> {
             if (vm.getId() == null) {
-                throw RRException.badRequest("修改时必须指明Id");
+                throw RRException.badRequest(Constant.ERROR_MSG_ID_NEED);
             }
         });
         if (userService.updateBatchById(vmList)) {

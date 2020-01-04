@@ -23,5 +23,6 @@ public interface UserService extends IService<User> {
 
     boolean updateBatchById(List<UserVM> vmList);
 
+    User getByUsername(String username);
 }
 

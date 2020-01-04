@@ -10,15 +10,17 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.Arrays;
+import java.util.List;
 
 
 /**
- * todo 20200104 完成
  * 问诊记录 api
  */
 @RestController
-@RequestMapping("/api/medicalrecord")
+@RequestMapping("/api/mr")
 public class MedicalRecordController {
     @Autowired
     private MedicalRecordService medicalRecordService;
@@ -53,38 +55,93 @@ public class MedicalRecordController {
     @GetMapping("/info/{id}")
     public R info(@PathVariable("id") Integer id) {
         MedicalRecord medicalRecord = medicalRecordService.getById(id);
-
-        return R.ok().put("medicalRecord", medicalRecord);
+        if (medicalRecord != null) {
+            return R.ok().put("medicalRecord", medicalRecord);
+        }
+        throw RRException.notFound(Constant.ERROR_MSG_ID_NOT_EXIST);
     }
 
     /**
      * 保存
      */
     @PostMapping("/save")
-    public R save(@RequestBody MedicalRecord medicalRecord) {
-        medicalRecordService.save(medicalRecord);
+    public R save(@Valid @RequestBody MedicalRecord medicalRecord, HttpServletResponse response) {
+        if (medicalRecord.getId() != null) {
+            throw RRException.badRequest(Constant.ERROR_MSG_ID_NOT_NEED);
+        }
+        if (medicalRecordService.save(medicalRecord)) {
+            return R.created(response).put("medicalRecord", medicalRecord);
+        }
+        throw RRException.serverError();
+    }
 
-        return R.ok();
+    /**
+     * 批量保存
+     */
+    @PostMapping("/batch/save")
+    public R saveBatch(@Valid @RequestBody List<MedicalRecord> medicalRecordList, HttpServletResponse response) {
+        medicalRecordList.forEach(medicalRecord -> {
+            if (medicalRecord.getId() != null) {
+                throw RRException.badRequest(Constant.ERROR_MSG_ID_NOT_NEED);
+            }
+        });
+        if (medicalRecordService.saveBatch(medicalRecordList)) {
+            return R.noContent(response);
+        }
+        throw RRException.serverError();
     }
 
     /**
      * 修改
      */
     @PutMapping("/update")
-    public R update(@RequestBody MedicalRecord medicalRecord) {
-        medicalRecordService.updateById(medicalRecord);
-
-        return R.ok();
+    public R update(@Valid @RequestBody MedicalRecord medicalRecord) {
+        if (medicalRecord.getId() == null) {
+            throw RRException.badRequest(Constant.ERROR_MSG_ID_NEED);
+        }
+        if (medicalRecordService.updateById(medicalRecord)) {
+            return R.ok().put("medicalRecord", medicalRecord);
+        }
+        throw RRException.serverError();
     }
+
+    /**
+     * 批量修改
+     */
+    @PutMapping("/batch/update")
+    public R updateBatch(@Valid @RequestBody List<MedicalRecord> medicalRecordList, HttpServletResponse response) {
+        medicalRecordList.forEach(medicalRecord -> {
+            if (medicalRecord.getId() == null) {
+                throw RRException.badRequest(Constant.ERROR_MSG_ID_NEED);
+            }
+        });
+        if (medicalRecordService.updateBatchById(medicalRecordList)) {
+            return R.noContent(response);
+        }
+        throw RRException.serverError();
+    }
+
 
     /**
      * 删除
      */
-    @DeleteMapping("/delete")
-    public R delete(@RequestBody Integer[] ids) {
-        medicalRecordService.removeByIds(Arrays.asList(ids));
+    @DeleteMapping("/delete/{id}")
+    public R delete(@PathVariable Integer id, HttpServletResponse response) {
+        if (medicalRecordService.removeById(id)) {
+            return R.noContent(response);
+        }
+        throw RRException.serverError();
+    }
 
-        return R.ok();
+    /**
+     * 批量删除
+     */
+    @PostMapping("/batch/delete")
+    public R deleteBatch(@RequestBody Integer[] ids, HttpServletResponse response) {
+        if (medicalRecordService.removeByIds(Arrays.asList(ids))) {
+            return R.noContent(response);
+        }
+        throw RRException.serverError();
     }
 
 }

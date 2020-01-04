@@ -68,8 +68,8 @@ public class MedicineOrderController {
      */
     @PostMapping("/save")
     public R save(@Valid @RequestBody MedicineOrderVM vm, HttpServletResponse response) {
-        if (vm.getMedicalRecordId() != null) {
-            throw RRException.badRequest("插入时不能指明Id");
+        if (vm.getMedicalRecordId() == null) {
+            throw RRException.badRequest(Constant.ERROR_MSG_ID_NEED);
         }
         if (medicineOrderService.saveVm(vm)) {
             return R.created(response).put("medicineOrder", vm);
@@ -83,8 +83,8 @@ public class MedicineOrderController {
     @PostMapping("/batch/save")
     public R saveBatch(@Valid @RequestBody List<MedicineOrderVM> vmList, HttpServletResponse response) {
         vmList.forEach(vm -> {
-            if (vm.getMedicalRecordId() != null) {
-                throw RRException.badRequest("插入时不能指明Id");
+            if (vm.getMedicalRecordId() == null) {
+                throw RRException.badRequest(Constant.ERROR_MSG_ID_NEED);
             }
         });
         if (medicineOrderService.saveVmBatch(vmList)) {
@@ -99,7 +99,7 @@ public class MedicineOrderController {
     @PutMapping("/update")
     public R update(@Valid @RequestBody MedicineOrderVM vm, HttpServletResponse response) {
         if (vm.getMedicalRecordId() == null) {
-            throw RRException.badRequest("修改时必须指明Id");
+            throw RRException.badRequest(Constant.ERROR_MSG_ID_NEED);
         }
         if (medicineOrderService.updateByMrId(vm)) {
             return R.noContent(response);
@@ -114,7 +114,7 @@ public class MedicineOrderController {
     public R updateBatch(@Valid @RequestBody List<MedicineOrderVM> vmList, HttpServletResponse response) {
         vmList.forEach(vm -> {
             if (vm.getMedicalRecordId() == null) {
-                throw RRException.badRequest("修改时必须指明Id");
+                throw RRException.badRequest(Constant.ERROR_MSG_ID_NEED);
             }
         });
         if (medicineOrderService.updateByMrIdVmBatch(vmList)) {
