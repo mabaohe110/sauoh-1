@@ -58,7 +58,7 @@ public class MedicineController {
         if (medicine != null) {
             return R.ok().put("medicine", medicine);
         }
-        throw RRException.notFound("id不存在");
+        throw RRException.notFound(Constant.ERROR_MSG_ID_NOT_EXIST);
     }
 
     /**
@@ -67,7 +67,7 @@ public class MedicineController {
     @PostMapping("/save")
     public R save(@Valid @RequestBody Medicine medicine, HttpServletResponse response) {
         if (medicine.getId() != null) {
-            throw RRException.badRequest("插入时不能指明Id");
+            throw RRException.badRequest(Constant.ERROR_MSG_ID_NOT_NEED);
         }
         if (medicineService.save(medicine)) {
             return R.created(response).put("medicine", medicine);
@@ -82,7 +82,7 @@ public class MedicineController {
     public R saveBatch(@Valid @RequestBody List<Medicine> medicineList, HttpServletResponse response) {
         medicineList.forEach(medicine -> {
             if (medicine.getId() != null) {
-                throw RRException.badRequest("插入时不能指明Id");
+                throw RRException.badRequest(Constant.ERROR_MSG_ID_NOT_NEED);
             }
         });
         if (medicineService.saveBatch(medicineList)) {
@@ -98,7 +98,7 @@ public class MedicineController {
     @PutMapping("/update")
     public R update(@Valid @RequestBody Medicine medicine, HttpServletResponse response) {
         if (medicine.getId() == null) {
-            throw RRException.badRequest("修改时必须指明Id");
+            throw RRException.badRequest(Constant.ERROR_MSG_ID_NEED);
         }
         if (medicineService.updateById(medicine)) {
             return R.noContent(response);
@@ -113,7 +113,7 @@ public class MedicineController {
     public R update(@Valid @RequestBody List<Medicine> medicineList, HttpServletResponse response) {
         medicineList.forEach(medicine -> {
             if (medicine.getId() == null) {
-                throw RRException.badRequest("修改时必须指明Id");
+                throw RRException.badRequest(Constant.ERROR_MSG_ID_NEED);
             }
         });
         if (medicineService.updateBatchById(medicineList)) {

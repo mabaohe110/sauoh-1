@@ -5,6 +5,7 @@ import cn.sau.sauoh.service.DoctorService;
 import cn.sau.sauoh.utils.Constant;
 import cn.sau.sauoh.utils.R;
 import cn.sau.sauoh.utils.RRException;
+import cn.sau.sauoh.web.vm.DoctorRecordVM;
 import cn.sau.sauoh.web.vm.DoctorVM;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -57,9 +58,21 @@ public class DoctorController {
     public R info(@PathVariable("id") Integer id) {
         Doctor doctor = doctorService.getById(id);
         if (doctor == null) {
-            throw RRException.notFound("id不存在");
+            throw RRException.notFound(Constant.ERROR_MSG_ID_NOT_EXIST);
         }
         return R.ok().put("doctor", doctor);
+    }
+
+    /**
+     * 一个提供给患者的，查看医生信息的controller，包括问诊次数和好评率
+     */
+    @GetMapping("/find/{id}")
+    public R find(@PathVariable("id") Integer id) {
+        DoctorRecordVM vm = doctorService.getVmById(id);
+        if (vm == null) {
+            throw RRException.notFound(Constant.ERROR_MSG_ID_NOT_EXIST);
+        }
+        return R.ok().put("doctorInfo", vm);
     }
 
     /**
@@ -68,7 +81,7 @@ public class DoctorController {
     @PostMapping("/save")
     public R save(@Valid @RequestBody Doctor doctor, HttpServletResponse response) {
         if (doctor.getId() != null) {
-            throw RRException.badRequest("插入时不能指明Id");
+            throw RRException.badRequest(Constant.ERROR_MSG_ID_NOT_NEED);
         }
         if (doctorService.save(doctor)) {
             return R.created(response).put("doctor", doctor);
@@ -83,7 +96,7 @@ public class DoctorController {
     public R saveBatch(@Valid @RequestBody List<Doctor> doctorList, HttpServletResponse response) {
         doctorList.forEach(doctor -> {
             if (doctor.getId() != null) {
-                throw RRException.badRequest("插入时不能指明Id");
+                throw RRException.badRequest(Constant.ERROR_MSG_ID_NOT_NEED);
             }
         });
         if (doctorService.saveBatch(doctorList)) {
@@ -98,7 +111,7 @@ public class DoctorController {
     @PostMapping("/savevm")
     public R saveVm(@Valid @RequestBody DoctorVM vm, HttpServletResponse response) {
         if (vm.getUserId() != null || vm.getDoctorId() != null) {
-            throw RRException.badRequest("插入时不能指明ID");
+            throw RRException.badRequest(Constant.ERROR_MSG_ID_NOT_NEED);
         }
         if (doctorService.saveVm(vm)) {
             return R.noContent(response);
@@ -113,7 +126,7 @@ public class DoctorController {
     public R saveVmBatch(@Valid @RequestBody List<DoctorVM> vmList, HttpServletResponse response) {
         vmList.forEach(vm -> {
             if (vm.getUserId() != null || vm.getDoctorId() != null) {
-                throw RRException.badRequest("插入时不能指明ID");
+                throw RRException.badRequest(Constant.ERROR_MSG_ID_NOT_NEED);
             }
         });
         if (doctorService.saveVmBatch(vmList)) {
@@ -128,7 +141,7 @@ public class DoctorController {
     @PutMapping("/update")
     public R update(@Valid @RequestBody Doctor doctor, HttpServletResponse response) {
         if (doctor.getId() == null) {
-            throw RRException.badRequest("修改时必须指明Id");
+            throw RRException.badRequest(Constant.ERROR_MSG_ID_NEED);
         }
         if (doctorService.updateById(doctor)) {
             return R.noContent(response);
@@ -143,7 +156,7 @@ public class DoctorController {
     public R updateBatch(@Valid @RequestBody List<Doctor> doctorList, HttpServletResponse response) {
         doctorList.forEach(doctor -> {
             if (doctor.getId() == null) {
-                throw RRException.badRequest("修改时必须指明Id");
+                throw RRException.badRequest(Constant.ERROR_MSG_ID_NEED);
             }
         });
         if (doctorService.updateBatchById(doctorList)) {

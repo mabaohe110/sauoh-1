@@ -144,6 +144,8 @@ public class UserController {
 
     /**
      * 删除
+     * user_role、patient、doctor 表中的 user_id 外键设置了 cascade 属性，会同步delete和update
+     * 即：删除一个 user 时，user对应的 roles和患者（医生）的对应数据也会删除
      */
     @DeleteMapping("/delete/{id}")
     public R delete(@PathVariable Integer id, HttpServletResponse response) {

@@ -59,7 +59,7 @@ public class PatientController {
         if (patient != null) {
             return R.ok().put("patient", patient);
         }
-        throw RRException.notFound("id不存在");
+        throw RRException.notFound(Constant.ERROR_MSG_ID_NOT_EXIST);
     }
 
     /**
@@ -68,7 +68,7 @@ public class PatientController {
     @PostMapping("/save")
     public R save(@Valid @RequestBody Patient patient, HttpServletResponse response) {
         if (patient.getId() != null) {
-            throw RRException.badRequest("插入时不能指明Id");
+            throw RRException.badRequest(Constant.ERROR_MSG_ID_NOT_NEED);
         }
         if (patientService.save(patient)) {
             return R.created(response).put("patient", patient);
@@ -83,7 +83,7 @@ public class PatientController {
     public R saveBatch(@Valid @RequestBody List<Patient> patientList, HttpServletResponse response) {
         patientList.forEach(patient -> {
             if (patient.getId() != null) {
-                throw RRException.badRequest("插入时不能指明Id");
+                throw RRException.badRequest(Constant.ERROR_MSG_ID_NOT_NEED);
             }
         });
         if (patientService.saveBatch(patientList)) {
@@ -98,7 +98,7 @@ public class PatientController {
     @PostMapping("/savevm")
     public R saveVm(@Valid @RequestBody PatientVM vm, HttpServletResponse response) {
         if (vm.getUserId() != null || vm.getPatientId() != null) {
-            throw RRException.badRequest("插入时不能指明Id");
+            throw RRException.badRequest(Constant.ERROR_MSG_ID_NOT_NEED);
         }
         if (patientService.saveVm(vm)) {
             return R.created(response).put("patientvm", vm);
@@ -113,7 +113,7 @@ public class PatientController {
     public R saveVmBatch(@Valid @RequestBody List<PatientVM> vmList, HttpServletResponse response) {
         vmList.forEach(vm -> {
             if (vm.getUserId() != null || vm.getPatientId() != null) {
-                throw RRException.badRequest("插入时不能指明Id");
+                throw RRException.badRequest(Constant.ERROR_MSG_ID_NOT_NEED);
             }
         });
         if (patientService.saveVmBatch(vmList)) {
@@ -128,7 +128,7 @@ public class PatientController {
     @PutMapping("/update")
     public R update(@Valid @RequestBody Patient patient, HttpServletResponse response) {
         if (patient.getId() == null) {
-            throw RRException.badRequest("修改时必须指明Id");
+            throw RRException.badRequest(Constant.ERROR_MSG_ID_NEED);
         }
         if (patientService.updateById(patient)) {
             return R.noContent(response);
@@ -143,7 +143,7 @@ public class PatientController {
     public R updateBatch(@Valid @RequestBody List<Patient> patientList, HttpServletResponse response) {
         patientList.forEach(patient -> {
             if (patient.getId() == null) {
-                throw RRException.badRequest("修改时必须指明Id");
+                throw RRException.badRequest(Constant.ERROR_MSG_ID_NEED);
             }
         });
         if (patientService.updateBatchById(patientList)) {

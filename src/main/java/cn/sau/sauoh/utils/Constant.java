@@ -23,5 +23,5 @@ public class Constant {
     public static final String ERROR_MSG_ID_NOT_EXIST = "Id不存在";
     public static final String ERROR_MSG_ID_NOT_NEED = "当前操作不应指明Id";
     public static final String ERROR_MSG_ID_NEED = "当前操作必须指明Id";
-
+    public static final String ERROR_MSG_USERID_CAN_NOT_UPDATE = "userId字段不能修改";
 }
