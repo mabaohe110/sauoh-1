@@ -18,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -36,23 +37,28 @@ public class RRExceptionHandler implements HandlerExceptionResolver {
             response.setContentType("application/json;charset=utf-8");
             response.setCharacterEncoding("utf-8");
 
-            int eCode = 500;
-            String eMsg = "未知错误，请联系管理员";
+            int status = 500;
+            String errorName = "未知错误，请联系管理员";
+            String message = "未知错误，请联系管理员";
             //一些自定义异常
             if (ex instanceof RRException) {
-                eCode = ((RRException) ex).getCode();
-                eMsg = ((RRException) ex).getMsg();
+                status = ((RRException) ex).getCode();
+                errorName = "RRException";
+                message = ((RRException) ex).getMsg();
             }
             //各种唯一值约束限制和数据库完整性约束
             else if (ex instanceof DataIntegrityViolationException) {
-                eCode = 400;
-                eMsg = handlDataIntegrityViolationException((DataIntegrityViolationException) ex);
+                status = 400;
+                errorName = "存储过程错误";
+                message = Objects.requireNonNull(((DataIntegrityViolationException) ex).getRootCause()).getLocalizedMessage();
             }
 
             R r = new R();
-            r.put("code", eCode);
-            r.put("msg", eMsg);
-            response.sendError(eCode, eMsg);
+            r.put("timestamp", (new SimpleDateFormat(DateUtils.DATE_TIME_PATTERN)).format(new Date()));
+            r.put("status", status);
+            r.put("error", errorName);
+            r.put("message", message);
+            response.sendError(status);
             String json = JSON.toJSONString(r);
             writer.print(json);
             writer.flush();
@@ -74,8 +80,10 @@ public class RRExceptionHandler implements HandlerExceptionResolver {
         for (FieldError fieldError : bindingResult.getFieldErrors()) {
             errors.add(fieldError.getField() + ":" + fieldError.getDefaultMessage());
         }
-        Map<String, Object> responseBody = new HashMap<>();
-        responseBody.put("code", "400");
+        Map<String, Object> responseBody = new LinkedHashMap<>(5);
+        responseBody.put("timestamp", (new SimpleDateFormat(DateUtils.DATE_TIME_PATTERN)).format(new Date()));
+        responseBody.put("status", 400);
+        responseBody.put("error", "表单绑定错误");
         responseBody.put("msg", errors);
         return responseBody;
     }

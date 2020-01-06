@@ -1,12 +1,12 @@
 package cn.sau.sauoh.utils;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * 针对返回数的操作类，用于设置http响应码
  */
-public class R extends HashMap<String, Object> {
+public class R extends LinkedHashMap<String, Object> {
     /*
      * http 响应码表
      * 20X
