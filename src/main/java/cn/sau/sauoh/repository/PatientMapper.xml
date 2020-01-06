@@ -13,5 +13,10 @@
         <result property="birthday" column="birthday"/>
     </resultMap>
 
+    <select id="selectByUserId" parameterType="java.lang.Integer" resultMap="patientMap">
+        select id, user_id, name, sex, phone, birthday
+        from patient
+        where user_id = #{userId,jdbcType=INTEGER}
+    </select>
 
 </mapper>

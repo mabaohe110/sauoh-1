@@ -5,6 +5,7 @@ import cn.sau.sauoh.web.vm.UserVM;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author nullptr
@@ -12,6 +13,8 @@ import java.util.List;
  * @date 2019-12-25 19:33:28
  */
 public interface UserService extends IService<User> {
+
+    User getByUsername(String username);
 
     UserVM getById(Integer id);
 
@@ -23,6 +26,6 @@ public interface UserService extends IService<User> {
 
     boolean updateBatchById(List<UserVM> vmList);
 
-    User getByUsername(String username);
+    Map<String, Object> getInfoByUsername(String username);
 }
 

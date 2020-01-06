@@ -1,10 +1,10 @@
 package cn.sau.sauoh.service.impl;
 
+import cn.sau.sauoh.entity.Doctor;
+import cn.sau.sauoh.entity.Patient;
 import cn.sau.sauoh.entity.User;
 import cn.sau.sauoh.entity.UserRole;
-import cn.sau.sauoh.repository.RoleMapper;
-import cn.sau.sauoh.repository.UserMapper;
-import cn.sau.sauoh.repository.UserRoleMapper;
+import cn.sau.sauoh.repository.*;
 import cn.sau.sauoh.service.UserService;
 import cn.sau.sauoh.utils.Constant;
 import cn.sau.sauoh.utils.RRException;
@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Service("userService")
@@ -25,6 +27,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private UserMapper userMapper;
     private UserRoleMapper userRoleMapper;
     private RoleMapper roleMapper;
+    private PatientMapper patientMapper;
+    private DoctorMapper doctorMapper;
 
     @Autowired
     public void setUserMapper(UserMapper userMapper) {
@@ -39,6 +43,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Autowired
     public void setRoleMapper(RoleMapper roleMapper) {
         this.roleMapper = roleMapper;
+    }
+
+    @Autowired
+    public void setPatientMapper(PatientMapper patientMapper) {
+        this.patientMapper = patientMapper;
+    }
+
+    @Autowired
+    public void setDoctorMapper(DoctorMapper doctorMapper) {
+        this.doctorMapper = doctorMapper;
+    }
+
+    @Override
+    public User getByUsername(String username) {
+        return userMapper.selectByUsername(username);
     }
 
     @Override
@@ -115,7 +134,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public User getByUsername(String username) {
-        return userMapper.selectByUsername(username);
+    public Map<String, Object> getInfoByUsername(String username) {
+        Map<String, Object> userInfo = new LinkedHashMap<>();
+        User user = userMapper.selectByUsername(username);
+        if(user == null){
+            throw RRException.notFound(Constant.ERROR_MSG_ID_NOT_EXIST);
+        }
+        List<String> roles = roleMapper.selectAllByUsername(username);
+        userInfo.put("uservm", UserVM.buildeWithUserAndRole(user, roles));
+        Patient patient = patientMapper.selectByUserId(user.getId());
+        if(patient != null){
+            userInfo.put("patient", patient);
+        }
+        if(roles.contains("ROLE_DOCTOR")){
+            Doctor doctor = doctorMapper.selectByUserId(user.getId());
+            if(doctor != null){
+                userInfo.put("doctor", doctor);
+            }
+        }
+        return userInfo;
     }
 }

@@ -24,6 +24,8 @@ public interface RoleMapper extends BaseMapper<Role> {
      */
     List<Role> selectAllByUserId(Integer userId);
 
+    List<String> selectAllByUsername(String username);
+
     /**
      * 查询指定value对应的id值
      *

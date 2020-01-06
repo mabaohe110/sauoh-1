@@ -1,7 +1,7 @@
 package cn.sau.sauoh.security.utils;
 
-import cn.sau.sauoh.security.entity.JwtUser;
-import cn.sau.sauoh.security.service.UserDetailsServiceImpl;
+import cn.sau.sauoh.entity.User;
+import cn.sau.sauoh.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,11 +14,11 @@ import org.springframework.stereotype.Component;
 public class CurrentUser {
 
     //因为获取登陆用户信息的任务很频繁，所以用final修饰
-    private final UserDetailsServiceImpl userDetailsService;
+    private final UserService userService;
 
     @Autowired
-    public CurrentUser(UserDetailsServiceImpl userDetailsService) {
-        this.userDetailsService = userDetailsService;
+    public CurrentUser(UserService userService) {
+        this.userService = userService;
     }
 
     private static String getCurrentUserName() {
@@ -29,7 +29,7 @@ public class CurrentUser {
         return null;
     }
 
-    public JwtUser getCurrentUser() {
-        return (JwtUser) userDetailsService.loadUserByUsername(getCurrentUserName());
+    public User getCurrentUser() {
+        return userService.getByUsername(getCurrentUserName());
     }
 }

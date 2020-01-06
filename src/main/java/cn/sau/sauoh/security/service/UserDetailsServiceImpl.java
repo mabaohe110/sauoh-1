@@ -41,7 +41,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
         List<Role> roles = roleMapper.selectAllByUserId(user.getId());
         // 如果checkCode为空说明经过了邮箱验证
-        boolean enable = user.getCheckCode() == null;
+        boolean enable = (user.getCheckCode() == null);
         return new RegisterUser(user.getUsername(), user.getEmail(), user.getPassword(), enable, roles);
     }
 }

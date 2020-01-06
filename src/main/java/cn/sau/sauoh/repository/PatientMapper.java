@@ -14,4 +14,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PatientMapper extends BaseMapper<Patient> {
 
+    Patient selectByUserId(Integer userId);
 }
