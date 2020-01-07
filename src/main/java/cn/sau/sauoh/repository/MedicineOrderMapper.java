@@ -5,9 +5,9 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
- * 
- * 
  * @author nullptr
  * @email justitacsl@outlook.com
  * @date 2019-12-25 19:33:28
@@ -16,10 +16,17 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MedicineOrderMapper extends BaseMapper<MedicineOrder> {
 
+
     /**
-     * 删除一次问诊记录中的所有药品订单
-     * @param recordId
-     * @return
+     * 查询一个问诊记录下所有的行（实际就是一个药品订单）
+     *
+     * @param mrId 问诊记录ID
      */
-    int deleteAllByRecordId(Integer recordId);
+    List<MedicineOrder> selectAllByMrId(Integer mrId);
+
+    /**
+     * 删除一次问诊记录中的药品订单
+     */
+    int deleteAllByMrId(Integer mrId);
+
 }

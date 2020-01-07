@@ -18,13 +18,17 @@ public interface RoleMapper extends BaseMapper<Role> {
 
     /**
      * 查询指定 ID 的用户的所有身份
+     *
      * @param userId 用户 ID
      * @return 保存用户所有身份的 List
      */
     List<Role> selectAllByUserId(Integer userId);
 
+    List<String> selectAllByUsername(String username);
+
     /**
      * 查询指定value对应的id值
+     *
      * @param value value
      * @return value对应的id值
      */

@@ -16,10 +16,10 @@ import java.util.Date;
  * @author nullptr
  * @date 2019-12-25 19:33:28
  */
-@Data
 @Builder
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 @TableName("user")
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;

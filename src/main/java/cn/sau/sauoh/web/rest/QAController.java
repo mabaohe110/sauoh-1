@@ -1,7 +1,7 @@
 package cn.sau.sauoh.web.rest;
 
-import cn.sau.sauoh.entity.MedicalRecord;
-import cn.sau.sauoh.service.MedicalRecordService;
+import cn.sau.sauoh.entity.QA;
+import cn.sau.sauoh.service.QAService;
 import cn.sau.sauoh.utils.Constant;
 import cn.sau.sauoh.utils.R;
 import cn.sau.sauoh.utils.RRException;
@@ -15,15 +15,15 @@ import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
 
-
 /**
- * 问诊记录 api
+ * @author nullptr
+ * @date 2020/1/6 23:19
  */
 @RestController
-@RequestMapping("/api/mr")
-public class MedicalRecordController {
+@RequestMapping("/api/qa")
+public class QAController {
     @Autowired
-    private MedicalRecordService medicalRecordService;
+    private QAService qaService;
 
     /**
      * 列表
@@ -38,25 +38,24 @@ public class MedicalRecordController {
                 throw RRException.badRequest("sortOf allow ASC or DESC");
             }
         }
-        Page<MedicalRecord> page = new Page<>(pageNum, pageSize);
+        Page<QA> page = new Page<>(pageNum, pageSize);
         if (Constant.SORTOF_ASC.equalsIgnoreCase(sortOf)) {
             page.addOrder(OrderItem.asc(sortBy));
         } else if (Constant.SORTOF_DESC.equalsIgnoreCase(sortOf)) {
             page.addOrder(OrderItem.desc(sortBy));
         }
-        medicalRecordService.page(page);
+        qaService.page(page);
         return R.ok().put("page", page);
     }
-
 
     /**
      * 信息
      */
     @GetMapping("/info/{id}")
     public R info(@PathVariable("id") Integer id) {
-        MedicalRecord medicalRecord = medicalRecordService.getById(id);
-        if (medicalRecord != null) {
-            return R.ok().put("medicalRecord", medicalRecord);
+        QA qa = qaService.getById(id);
+        if (qa != null) {
+            return R.ok().put("medicalRecord", qa);
         }
         throw RRException.notFound(Constant.ERROR_MSG_ID_NOT_EXIST);
     }
@@ -65,12 +64,12 @@ public class MedicalRecordController {
      * 保存
      */
     @PostMapping("/save")
-    public R save(@Valid @RequestBody MedicalRecord medicalRecord, HttpServletResponse response) {
-        if (medicalRecord.getId() != null) {
+    public R save(@Valid @RequestBody QA qa, HttpServletResponse response) {
+        if (qa.getId() != null) {
             throw RRException.badRequest(Constant.ERROR_MSG_ID_NOT_NEED);
         }
-        if (medicalRecordService.save(medicalRecord)) {
-            return R.created(response).put("medicalRecord", medicalRecord);
+        if (qaService.save(qa)) {
+            return R.created(response).put("qa", qa);
         }
         throw RRException.serverError();
     }
@@ -79,13 +78,13 @@ public class MedicalRecordController {
      * 批量保存
      */
     @PostMapping("/batch/save")
-    public R saveBatch(@Valid @RequestBody List<MedicalRecord> medicalRecordList, HttpServletResponse response) {
-        medicalRecordList.forEach(medicalRecord -> {
-            if (medicalRecord.getId() != null) {
+    public R saveBatch(@Valid @RequestBody List<QA> qaList, HttpServletResponse response) {
+        qaList.forEach(qa -> {
+            if (qa.getId() != null) {
                 throw RRException.badRequest(Constant.ERROR_MSG_ID_NOT_NEED);
             }
         });
-        if (medicalRecordService.saveBatch(medicalRecordList)) {
+        if (qaService.saveBatch(qaList)) {
             return R.noContent(response);
         }
         throw RRException.serverError();
@@ -95,12 +94,12 @@ public class MedicalRecordController {
      * 修改
      */
     @PutMapping("/update")
-    public R update(@Valid @RequestBody MedicalRecord medicalRecord) {
-        if (medicalRecord.getId() == null) {
+    public R update(@Valid @RequestBody QA qa) {
+        if (qa.getId() == null) {
             throw RRException.badRequest(Constant.ERROR_MSG_ID_NEED);
         }
-        if (medicalRecordService.updateById(medicalRecord)) {
-            return R.ok().put("medicalRecord", medicalRecord);
+        if (qaService.updateById(qa)) {
+            return R.ok().put("qa", qa);
         }
         throw RRException.serverError();
     }
@@ -109,13 +108,13 @@ public class MedicalRecordController {
      * 批量修改
      */
     @PutMapping("/batch/update")
-    public R updateBatch(@Valid @RequestBody List<MedicalRecord> medicalRecordList, HttpServletResponse response) {
-        medicalRecordList.forEach(medicalRecord -> {
-            if (medicalRecord.getId() == null) {
+    public R updateBatch(@Valid @RequestBody List<QA> qaList, HttpServletResponse response) {
+        qaList.forEach(qa -> {
+            if (qa.getId() == null) {
                 throw RRException.badRequest(Constant.ERROR_MSG_ID_NEED);
             }
         });
-        if (medicalRecordService.updateBatchById(medicalRecordList)) {
+        if (qaService.updateBatchById(qaList)) {
             return R.noContent(response);
         }
         throw RRException.serverError();
@@ -127,7 +126,7 @@ public class MedicalRecordController {
      */
     @DeleteMapping("/delete/{id}")
     public R delete(@PathVariable Integer id, HttpServletResponse response) {
-        if (medicalRecordService.removeById(id)) {
+        if (qaService.removeById(id)) {
             return R.noContent(response);
         }
         throw RRException.serverError();
@@ -138,10 +137,9 @@ public class MedicalRecordController {
      */
     @PostMapping("/batch/delete")
     public R deleteBatch(@RequestBody Integer[] ids, HttpServletResponse response) {
-        if (medicalRecordService.removeByIds(Arrays.asList(ids))) {
+        if (qaService.removeByIds(Arrays.asList(ids))) {
             return R.noContent(response);
         }
         throw RRException.serverError();
     }
-
 }

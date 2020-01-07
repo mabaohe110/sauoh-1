@@ -6,8 +6,6 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 /**
- * 
- * 
  * @author nullptr
  * @email justitacsl@outlook.com
  * @date 2019-12-25 19:33:28
@@ -15,5 +13,5 @@ import org.springframework.stereotype.Repository;
 @Mapper
 @Repository
 public interface MedicineMapper extends BaseMapper<Medicine> {
-	
+
 }

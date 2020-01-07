@@ -3,7 +3,7 @@
 
 <mapper namespace="cn.sau.sauoh.repository.DoctorMapper">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="cn.sau.sauoh.entity.Doctor" id="doctorMap">
         <result property="id" column="id"/>
         <result property="userId" column="user_id"/>
@@ -17,5 +17,20 @@
         <result property="checked" column="checked"/>
     </resultMap>
 
+    <select id="selectByUserId" parameterType="java.lang.Integer" resultMap="doctorMap">
+        select id,
+               user_id,
+               name,
+               sex,
+               phone,
+               worked_time,
+               level,
+               hospital,
+               department_id,
+               checked
+        from doctor
+        where checked = 1
+          and user_id = #{userId,jdbcType=INTEGER}
+    </select>
 
 </mapper>

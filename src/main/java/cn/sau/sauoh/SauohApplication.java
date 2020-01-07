@@ -9,8 +9,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class SauohApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SauohApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SauohApplication.class, args);
+    }
 
 }

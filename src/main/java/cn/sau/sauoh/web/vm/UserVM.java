@@ -15,6 +15,7 @@ import java.util.List;
 @Data
 @Builder
 public class UserVM {
+
     private Integer id;
     @NotNull
     private String username;
@@ -23,16 +24,17 @@ public class UserVM {
     private String email;
     @NotNull
     private String password;
+    @NotNull
     private List<String> roles;
+
+    public static UserVM buildeWithUserAndRole(User user, List<String> roles) {
+        return UserVM.builder().id(user.getId()).username(user.getUsername()).
+                email(user.getEmail()).password(user.getPassword()).roles(roles).build();
+    }
 
     @JsonIgnore
     public User getUser() {
         return User.builder().id(id).username(username).email(email)
                 .password(password).build();
-    }
-
-    public static UserVM buildeWithUserAndRole(User user, List<String> roles) {
-        return UserVM.builder().id(user.getId()).username(user.getUsername()).
-                email(user.getEmail()).password(user.getPassword()).roles(roles).build();
     }
 }

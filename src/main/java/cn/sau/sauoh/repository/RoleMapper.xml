@@ -19,6 +19,16 @@
           AND user.id = #{userId,jdbcType=INTEGER}
     </select>
 
+    <select id="selectAllByUsername" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT role.name name
+        FROM user
+                 INNER JOIN user_role
+                 INNER JOIN role
+        WHERE user.id = user_role.user_id
+          AND user_role.role_id = role.id
+          AND user.username = #{username,jdbcType=VARCHAR}
+    </select>
+
     <select id="selectRoleIdByValue" parameterType="java.lang.String" resultType="java.lang.Integer">
         SELECT id
         FROM role

@@ -10,6 +10,7 @@
         <result property="doctorId" column="doctor_id"/>
         <result property="patientStatus" column="patient_status"/>
         <result property="doctorAdvice" column="doctor_advice"/>
+        <result property="patientAppraise" column="patient_appraise"/>
     </resultMap>
 
     <select id="selectAllRecordsByPatientId" parameterType="java.lang.Integer" resultMap="medicalRecordMap">

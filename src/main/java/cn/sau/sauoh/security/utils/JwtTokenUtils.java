@@ -7,7 +7,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-
 import javax.crypto.SecretKey;
 import javax.xml.bind.DatatypeConverter;
 import java.util.Arrays;
@@ -43,11 +42,6 @@ public class JwtTokenUtils {
         return SecurityConstants.TOKEN_PREFIX + tokenPrefix;
     }
 
-    private boolean isTokenExpired(String token) {
-        Date expiredDate = getTokenBody(token).getExpiration();
-        return expiredDate.before(new Date());
-    }
-
     public static String getUsernameByToken(String token) {
         return getTokenBody(token).getSubject();
     }
@@ -68,5 +62,10 @@ public class JwtTokenUtils {
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    private boolean isTokenExpired(String token) {
+        Date expiredDate = getTokenBody(token).getExpiration();
+        return expiredDate.before(new Date());
     }
 }

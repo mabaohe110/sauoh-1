@@ -2,6 +2,7 @@ package cn.sau.sauoh.web.vm;
 
 import cn.sau.sauoh.entity.Patient;
 import cn.sau.sauoh.entity.User;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
@@ -33,6 +34,7 @@ public class PatientVM {
     @NotNull
     private String phone;
     @NotNull
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date birthday;
 
     @JsonIgnore

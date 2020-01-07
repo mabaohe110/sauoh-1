@@ -1,7 +1,8 @@
 package cn.sau.sauoh.web.rest;
 
-import cn.sau.sauoh.entity.Department;
-import cn.sau.sauoh.service.DepartmentService;
+import cn.sau.sauoh.entity.Illness;
+import cn.sau.sauoh.entity.MedicalRecord;
+import cn.sau.sauoh.service.IllnessService;
 import cn.sau.sauoh.utils.Constant;
 import cn.sau.sauoh.utils.R;
 import cn.sau.sauoh.utils.RRException;
@@ -10,15 +11,15 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-
 /**
- * 科室API
+ * @author nullptr
+ * @date 2020/1/6 11:52
  */
 @RestController
-@RequestMapping("/api/department")
-public class DepartmentController {
+@RequestMapping("/api/illness")
+public class IllnessController {
     @Autowired
-    private DepartmentService departmentService;
+    private IllnessService illnessService;
 
     /**
      * 列表
@@ -33,13 +34,13 @@ public class DepartmentController {
                 throw RRException.badRequest("sortOf allow ASC or DESC");
             }
         }
-        Page<Department> page = new Page<>(pageNum, pageSize);
+        Page<Illness> page = new Page<>(pageNum, pageSize);
         if (Constant.SORTOF_ASC.equalsIgnoreCase(sortOf)) {
             page.addOrder(OrderItem.asc(sortBy));
         } else if (Constant.SORTOF_DESC.equalsIgnoreCase(sortOf)) {
             page.addOrder(OrderItem.desc(sortBy));
         }
-        departmentService.page(page);
+        illnessService.page(page);
         return R.ok().put("page", page);
     }
 
@@ -49,11 +50,11 @@ public class DepartmentController {
      */
     @GetMapping("/info/{id}")
     public R info(@PathVariable("id") Integer id) {
-        Department department = departmentService.getById(id);
-        if (department == null) {
-            throw RRException.notFound("指定Id不存在");
+        Illness illness = illnessService.getById(id);
+        if (illness != null) {
+            return R.ok().put("medicalRecord", illness);
         }
-        return R.ok().put("department", department);
+        throw RRException.notFound(Constant.ERROR_MSG_ID_NOT_EXIST);
     }
 
 }

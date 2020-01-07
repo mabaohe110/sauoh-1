@@ -1,22 +1,24 @@
 package cn.sau.sauoh.service.impl;
 
+import cn.sau.sauoh.entity.Doctor;
+import cn.sau.sauoh.entity.Patient;
 import cn.sau.sauoh.entity.User;
 import cn.sau.sauoh.entity.UserRole;
 import cn.sau.sauoh.repository.*;
 import cn.sau.sauoh.service.UserService;
+import cn.sau.sauoh.utils.Constant;
 import cn.sau.sauoh.utils.RRException;
 import cn.sau.sauoh.web.vm.UserVM;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.Map;
 
 
 @Service("userService")
@@ -53,12 +55,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         this.doctorMapper = doctorMapper;
     }
 
+    @Override
+    public User getByUsername(String username) {
+        return userMapper.selectByUsername(username);
+    }
 
     @Override
     public UserVM getById(Integer id) {
         User user = userMapper.selectById(id);
         if (user == null) {
-            throw RRException.notFound("id指定的记录不存在");
+            throw RRException.notFound(Constant.ERROR_MSG_ID_NOT_EXIST);
         }
         List<UserRole> userRoles = userRoleMapper.selectAllByUserId(id);
         List<String> roles = new ArrayList<>();
@@ -69,14 +75,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return UserVM.buildeWithUserAndRole(user, roles);
     }
 
+    /**
+     * 如果有username、email有重复值，会由于数据库完整性报错
+     */
     @Override
-    @Transactional(rollbackFor = {SQLException.class, RRException.class})
-    public UserVM save(UserVM vm) {
-        if (vm.getId() != null) {
-            throw RRException.badRequest("插入时不能含有主键值");
-        }
+    @Transactional(rollbackFor = {DataIntegrityViolationException.class, RRException.class})
+    public boolean saveVm(UserVM vm) {
         if (vm.getRoles().isEmpty()) {
-            throw RRException.badRequest("无法保存不含身份数据的用户");
+            throw RRException.badRequest("roles不能为空");
         }
         User user = vm.getUser();
         // insert 之后主键回填
@@ -89,40 +95,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             }
             userRoleMapper.insert(UserRole.builder().userId(user.getId()).roleId(roleId).build());
         });
-        return vm;
-    }
-
-    /**
-     * 为了方便序列化为List，这个函数参数一般情况下是没有经过表单验证的，
-     * 除了邮箱格式错误以外，其他值如果为null会因为数据库的完整性约束报错，进而rollback
-     */
-    @Override
-    @Transactional(rollbackFor = {SQLException.class, RRException.class})
-    public boolean saveBatch(List<UserVM> vmList) {
-        //邮箱地址的正则表达式
-        String pattern = "[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[\\w](?:[\\w-]*[\\w])?";
-        vmList.forEach(vm -> {
-            if (vm.getEmail() == null) {
-                throw RRException.badRequest("请输入邮箱地址");
-            }
-            if (!vm.getEmail().matches(pattern)) {
-                throw RRException.badRequest("邮箱地址错误");
-            }
-            save(vm);
-        });
         return true;
     }
 
     @Override
-    @Transactional(rollbackFor = {SQLException.class, RRException.class})
-    public boolean updateById(UserVM vm) {
-        if (vm.getId() == null) {
-            throw RRException.badRequest("修改时必须指明ID字段");
-        }
-        if (vm.getRoles().isEmpty()) {
-            throw RRException.badRequest("无法保存不含身份数据的用户");
-        }
+    @Transactional(rollbackFor = {DataIntegrityViolationException.class, RRException.class})
+    public boolean saveVmBatch(List<UserVM> vmList) {
+        vmList.forEach(this::saveVm);
+        return true;
+    }
 
+    @Override
+    @Transactional(rollbackFor = {DataIntegrityViolationException.class, RRException.class})
+    public boolean updateById(UserVM vm) {
+        if (vm.getRoles().isEmpty()) {
+            throw RRException.badRequest("无法保存不含身份数据的账号");
+        }
         User user = vm.getUser();
         userMapper.updateById(user);
         //user_role直接把原来的全删了再加入新的
@@ -139,34 +127,31 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     //如果出一个错误就全部回滚
     @Override
-    @Transactional(rollbackFor = {SQLException.class, RRException.class})
+    @Transactional(rollbackFor = {DataIntegrityViolationException.class, RRException.class})
     public boolean updateBatchById(List<UserVM> vmList) {
-        AtomicBoolean flag = new AtomicBoolean(true);
-        vmList.forEach(vm -> {
-            if (!updateById(vm)) {
-                flag.set(false);
-            }
-        });
-        return flag.get();
+        vmList.forEach(this::updateById);
+        return true;
     }
 
     @Override
-    @Transactional(rollbackFor = {SQLException.class, RRException.class})
-    public boolean removeById(Serializable id) {
-        User user = userMapper.selectById(id);
-        if (user == null) {
-            throw RRException.badRequest("id为null");
+    public Map<String, Object> getInfoByUsername(String username) {
+        Map<String, Object> userInfo = new LinkedHashMap<>();
+        User user = userMapper.selectByUsername(username);
+        if(user == null){
+            throw RRException.notFound(Constant.ERROR_MSG_ID_NOT_EXIST);
         }
-        //user_role表
-        userRoleMapper.deleteAllByUserId(user.getId());
-        userMapper.deleteById(id);
-        return true;
-    }
-
-    @Override
-    @Transactional(rollbackFor = {SQLException.class, RRException.class})
-    public boolean removeByIds(Collection<? extends Serializable> idList) {
-        idList.forEach(this::removeById);
-        return true;
+        List<String> roles = roleMapper.selectAllByUsername(username);
+        userInfo.put("uservm", UserVM.buildeWithUserAndRole(user, roles));
+        Patient patient = patientMapper.selectByUserId(user.getId());
+        if(patient != null){
+            userInfo.put("patient", patient);
+        }
+        if(roles.contains("ROLE_DOCTOR")){
+            Doctor doctor = doctorMapper.selectByUserId(user.getId());
+            if(doctor != null){
+                userInfo.put("doctor", doctor);
+            }
+        }
+        return userInfo;
     }
 }
